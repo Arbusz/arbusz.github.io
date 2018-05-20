@@ -6,7 +6,7 @@
     <description>Recent content in Tags on Arbus&#39;s Little Site</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 27 Mar 2018 19:24:27 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 20 May 2018 19:45:45 +0800</lastBuildDate>
     
 	<atom:link href="https://arbusz.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Development</title>
       <link>https://arbusz.github.io/tags/development/</link>
-      <pubDate>Tue, 27 Mar 2018 19:24:27 +0800</pubDate>
+      <pubDate>Sun, 20 May 2018 19:45:45 +0800</pubDate>
       
       <guid>https://arbusz.github.io/tags/development/</guid>
       <description></description>
@@ -23,27 +23,9 @@
     <item>
       <title>Golang</title>
       <link>https://arbusz.github.io/tags/golang/</link>
-      <pubDate>Tue, 27 Mar 2018 19:24:27 +0800</pubDate>
+      <pubDate>Sun, 20 May 2018 19:45:45 +0800</pubDate>
       
       <guid>https://arbusz.github.io/tags/golang/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Tag1</title>
-      <link>https://arbusz.github.io/tags/tag1/</link>
-      <pubDate>Sun, 20 May 2018 19:45:45 +0800</pubDate>
-      
-      <guid>https://arbusz.github.io/tags/tag1/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Tag2</title>
-      <link>https://arbusz.github.io/tags/tag2/</link>
-      <pubDate>Sun, 20 May 2018 19:45:45 +0800</pubDate>
-      
-      <guid>https://arbusz.github.io/tags/tag2/</guid>
       <description></description>
     </item>
     
