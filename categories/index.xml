@@ -11,6 +11,15 @@
     
     
     <item>
+      <title>Category</title>
+      <link>https://arbusz.github.io/categories/category/</link>
+      <pubDate>Sun, 20 May 2018 19:45:45 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/categories/category/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Development</title>
       <link>https://arbusz.github.io/categories/development/</link>
       <pubDate>Tue, 27 Mar 2018 19:24:27 +0800</pubDate>
@@ -25,6 +34,15 @@
       <pubDate>Tue, 27 Mar 2018 19:24:27 +0800</pubDate>
       
       <guid>https://arbusz.github.io/categories/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Subcategory</title>
+      <link>https://arbusz.github.io/categories/subcategory/</link>
+      <pubDate>Sun, 20 May 2018 19:45:45 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/categories/subcategory/</guid>
       <description></description>
     </item>
     

@@ -29,5 +29,23 @@
       <description></description>
     </item>
     
+    <item>
+      <title>Tag1</title>
+      <link>https://arbusz.github.io/tags/tag1/</link>
+      <pubDate>Sun, 20 May 2018 19:45:45 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/tags/tag1/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Tag2</title>
+      <link>https://arbusz.github.io/tags/tag2/</link>
+      <pubDate>Sun, 20 May 2018 19:45:45 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/tags/tag2/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>
