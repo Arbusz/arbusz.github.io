@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nil on Arbus&#39;s Little Site</title>
+    <link>https://arbusz.github.io/tags/nil/</link>
+    <description>Recent content in Nil on Arbus&#39;s Little Site</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 04 Jun 2018 21:26:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://arbusz.github.io/tags/nil/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>包含nil指针的接口和nil接口</title>
+      <link>https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/</link>
+      <pubDate>Mon, 04 Jun 2018 21:26:20 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
