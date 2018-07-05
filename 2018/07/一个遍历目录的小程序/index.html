@@ -1,5 +1,9 @@
 
 
+  
+    
+  
+
 
   
 
@@ -18,25 +22,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Hugo 0.40.1 with theme Tranquilpeak 0.4.3-BETA">
-    <title>Wtf</title>
+    <title>一个遍历目录的小程序</title>
     <meta name="author" content="Arbus">
-    <meta name="keywords" content="">
+    <meta name="keywords" content="tech">
 
     <link rel="icon" href="https://arbusz.github.io/favicon.png">
     
-      <link rel="alternate" type="application/rss+xml" title="RSS" href="https://arbusz.github.io/categories/wtf/index.xml">
-    
 
     
-    <meta name="description" content="Hugo tranquilpeak theme demo">
-    <meta property="og:description" content="Hugo tranquilpeak theme demo">
+    <meta name="description" content="">
+    <meta property="og:description" content="">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="Wtf">
-    <meta property="og:url" content="/categories/wtf/">
+    <meta property="og:title" content="一个遍历目录的小程序">
+    <meta property="og:url" content="/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
     <meta property="og:site_name" content="Arbus&#39;s Little Site">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Arbus&#39;s Little Site">
-    <meta name="twitter:description" content="Hugo tranquilpeak theme demo">
+    <meta name="twitter:description" content="">
     
     
 
@@ -71,7 +73,7 @@
 
   <body>
     <div id="blog">
-      <header id="header" data-behavior="1">
+      <header id="header" data-behavior="4">
   <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
   <div class="header-title">
     <a class="header-title-link" href="https://arbusz.github.io/">Arbus&#39;s Little Site</a>
@@ -91,7 +93,7 @@
   
 </header>
 
-      <nav id="sidebar" data-behavior="1">
+      <nav id="sidebar" data-behavior="4">
   <div class="sidebar-container">
     
       <div class="sidebar-profile">
@@ -240,48 +242,30 @@
 </nav>
 
       
-        
 
-      
-      <div id="main" data-behavior="1"
+      <div id="main" data-behavior="4"
         class="
                hasCoverMetaIn
                ">
-        
-          <section class="postShorten-group main-content-wrap">
-            
-            
-              
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
   
-    
-      
-        
-      
-    
+    <h1 class="post-title" itemprop="headline">
+      一个遍历目录的小程序
+    </h1>
   
-
-
   
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/">
-          包含nil指针的接口和nil接口
-        </a>
-      </h1>
-      
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2018-06-04T21:26:20&#43;08:00">
+      <time itemprop="datePublished" datetime="2018-07-05T08:19:34&#43;08:00">
         
   
   
   
   
-    4 June 2018
+    5 July 2018
   
 
       </time>
@@ -291,31 +275,141 @@
   
     <span>in</span>
     
-      <a class="category-link" href="https://arbusz.github.io/categories/wtf">WTF</a>, 
-    
       <a class="category-link" href="https://arbusz.github.io/categories/golang">GoLang</a>
     
   
 
   </div>
 
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      <p></p>
-      <p>
-        <a href="https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/" class="postShorten-excerpt_link link">Continue reading</a>
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p></p>
+
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+	&quot;io/ioutil&quot;
+)
+
+func main() {
+	folder := &quot;.&quot;
+	listFile(folder)
+}
+
+func listFile(folder string) {
+	files, _ := ioutil.ReadDir(folder) //specify the current dir
+	for _, file := range files {
+		if file.IsDir() {
+			listFile(folder + &quot;/&quot; + file.Name())
+		} else {
+			fmt.Println(folder + &quot;/&quot; + file.Name())
+		}
+	}
+
+}
+</code></pre>
+
+<p>递归打印当前目录下所有文件名。</p>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://arbusz.github.io/tags/golang/">golang</a>
+
+  <a class="tag tag--primary tag--small" href="https://arbusz.github.io/tags/%E4%BB%A3%E7%A0%81/">代码</a>
+
+                  </div>
+                
+              
+            
+            
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/" data-tooltip="包含nil指针的接口和nil接口">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
         
-      </p>
-    </div>
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
   </div>
-  
-</article>
+
 
             
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
             
-
-          </section>
-        
+          </div>
+        </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
     &copy; 2018 Arbus. All Rights Reserved
@@ -323,6 +417,102 @@
 </footer>
 
       </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/" data-tooltip="包含nil指针的接口和nil接口">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Farbusz.github.io%2F2018%2F07%2F%25E4%25B8%2580%25E4%25B8%25AA%25E9%2581%258D%25E5%258E%2586%25E7%259B%25AE%25E5%25BD%2595%25E7%259A%2584%25E5%25B0%258F%25E7%25A8%258B%25E5%25BA%258F%2F">
+          <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Farbusz.github.io%2F2018%2F07%2F%25E4%25B8%2580%25E4%25B8%25AA%25E9%2581%258D%25E5%258E%2586%25E7%259B%25AE%25E5%25BD%2595%25E7%259A%2584%25E5%25B0%258F%25E7%25A8%258B%25E5%25BA%258F%2F">
+          <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https%3A%2F%2Farbusz.github.io%2F2018%2F07%2F%25E4%25B8%2580%25E4%25B8%25AA%25E9%2581%258D%25E5%258E%2586%25E7%259B%25AE%25E5%25BD%2595%25E7%259A%2584%25E5%25B0%258F%25E7%25A8%258B%25E5%25BA%258F%2F">
+          <i class="fa fa-google-plus"></i><span>Share on Google&#43;</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
     </div>
     
     <div id="about">
@@ -501,6 +691,32 @@ $(document).ready(function() {
 });
 </script>
 
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/arbusz.github.io\/2018\/07\/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F\/';
+          
+            this.page.identifier = '\/2018\/07\/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'hugo-tranquilpeak-theme';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
 
 
 
