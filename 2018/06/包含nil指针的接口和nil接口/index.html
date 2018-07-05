@@ -289,7 +289,7 @@
             <div class="main-content-wrap">
               <p></p>
 
-<p>#####今天看了一段代码，对运行结果十分迷惑，就研究了一番。</p>
+<h5 id="今天看了一段代码-对运行结果十分迷惑-就研究了一番">今天看了一段代码，对运行结果十分迷惑，就研究了一番。</h5>
 
 <pre><code class="language-go">package main
 
@@ -319,15 +319,12 @@ func main() m{
         fmt.Println(&quot;BBBBBBB&quot;, live())
     }
 
-    var s *Student
-    fmt.Println(s == nil)
 }
 </code></pre>
 
 <p>运行结果如下</p>
 
 <pre><code>BBBBBBB &lt;nil&gt;
-true
 </code></pre>
 
 <p>为什么会出现这样的结果，于是开始调试：</p>
@@ -380,6 +377,48 @@ true
 
 <p>原来将*Student类型的返回值赋值给People时，接口的类型被赋值为Student类型的指针，而类型描述符被赋值为nil。而一个接口为nil的充要条件为接口的运行时类型为nil，并且接口的运行时值为nil。
 如果想运行出现之前以为的运行结果，只需把Show方法和live函数里的变量改成非指针类型即可。</p>
+
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+)
+
+type People interface {
+	Show()
+}
+
+type Student struct{}
+
+func (stu Student) Show() {
+
+}
+
+func live() People {
+	var stu Student
+	return stu
+}
+
+func printDynamicType(any interface{}) {
+	fmt.Printf(&quot;%T\n&quot;, any)
+}
+
+func main() {
+	var a = live()
+	printDynamicType(a)
+	if live() == nil {
+		fmt.Println(&quot;AAAAAAA&quot;, live())
+	} else {
+		fmt.Println(&quot;BBBBBBB&quot;, live())
+	}
+}
+</code></pre>
+
+<p>结果如下：</p>
+
+<pre><code>main.Student
+BBBBBBB {}
+</code></pre>
               
             </div>
           </div>
