@@ -22,9 +22,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Hugo 0.40.1 with theme Tranquilpeak 0.4.3-BETA">
-    <title>Go语言笔记－表达式</title>
+    <title>协程Coroutines</title>
     <meta name="author" content="Arbus">
-    <meta name="keywords" content="">
+    <meta name="keywords" content="goroutine, coroutine">
 
     <link rel="icon" href="https://arbusz.github.io/favicon.png">
     
@@ -33,8 +33,8 @@
     <meta name="description" content="">
     <meta property="og:description" content="">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="Go语言笔记－表达式">
-    <meta property="og:url" content="/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+    <meta property="og:title" content="协程Coroutines">
+    <meta property="og:url" content="/2018/07/%E5%8D%8F%E7%A8%8Bcoroutines/">
     <meta property="og:site_name" content="Arbus&#39;s Little Site">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Arbus&#39;s Little Site">
@@ -253,19 +253,19 @@
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      Go语言笔记－表达式
+      协程Coroutines
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2018-05-20T19:45:45&#43;08:00">
+      <time itemprop="datePublished" datetime="2018-07-07T21:06:58&#43;08:00">
         
   
   
   
   
-    20 May 2018
+    7 July 2018
   
 
       </time>
@@ -275,9 +275,9 @@
   
     <span>in</span>
     
-      <a class="category-link" href="https://arbusz.github.io/categories/development">Development</a>, 
+      <a class="category-link" href="https://arbusz.github.io/categories/goland">GoLand</a>, 
     
-      <a class="category-link" href="https://arbusz.github.io/categories/golang">GoLang</a>
+      <a class="category-link" href="https://arbusz.github.io/categories/os">os</a>
     
   
 
@@ -289,166 +289,29 @@
             <div class="main-content-wrap">
               <p></p>
 
-<h1 id="表达式">表达式</h1>
+<h2 id="协程的概念">协程的概念</h2>
 
-<h2 id="指针">指针</h2>
+<p>对操作系统来说，进程是最小的资源管理单元，线程是最小的执行单元。
+对于进程和线程，都是有内核进行调度，有CPU时间片的概念，有多种调度算法。</p>
 
-<p>指针运算符为左值时，可以更新目标状态</p>
+<p>协程，英文Coroutines，是一种比线程更加轻量级的存在。正如一个进程可以拥有多个线程一样，一个线程也可以有多个协程。
+协程不是被操作系统内核所管理，而是完全在用户态执行，换句话说，协程是用户透明的。这样带来的好处就是性能得到了很大的提升，不会像线程切换那样消耗资源。</p>
 
-<pre><code class="language-go">package main
+<h2 id="goroutine和协程的区别">goroutine和协程的区别</h2>
 
-func main(){
-	x:=10
+<p>本质上，goroutine就是协程。不同的是，Go在runtime、系统调用等多方面对goroutine调度进行了封装和处理。当遇到长时间执行或进行系统调用时，会主动把当前的goroutine的CPU转让出去，让其他goroutine能被调度和执行，也就是GO从语言层面支持了协程。</p>
 
-	var p *int = &amp;x
-	println(&amp;x,x)
-	println(p,*p)
-	*p += 20
-	println(p,*p)
-	println(&amp;x,x)
-}
+<p>在内存消耗方面，每个goroutine默认占用的内存远比C、Java的线程少。
+在切换调度开销方面，线程涉及到模式切换（用户态与内核态）、多个寄存器刷新。goroutine只有三个寄存器的值修改（PC/SP/DX)。</p>
 
-</code></pre>
+<h2 id="协程的底层实现">协程的底层实现</h2>
 
-<p>output</p>
+<p>协程是在应用层模拟线程，他避免了上下文切换的额外消耗，同时兼顾了多线程的优点，简化了高并发程序的复杂性。
+实现原理与线程类似，线程a切换到线程b时，需要将线程a的相关执行进度压栈，然后线程b的执行进度出栈，进入线程b的执行序列。协程只不过是在应用层实现了这一点。
+协程是基于线程的。内部实现上，维护了一组数据结构和n个线程，真正执行的还是线程。协程执行的代码被扔进一个待执行队列中，由这n个线程从队列中拉出来执行。这就解决了协程的执行问题。那么协程是怎么切换的呢？答案是：golang 对各种 io函数进行了封装，这些封装的函数提供给应用程序使用，而其内部调用了操作系统的异步io函数，当这些异步函数返回busy或bloking时，golang利用这个时机将现有的执行序列压栈，让线程去拉另外一个协程的代码来执行，基本原理就是这样，利用并封装了操作系统的异步函数。
+(Go语言运行库封装了异步io，但即使我们通过调整$GOMAXPROCS来充分利用多核CPU并行处理，其效率也不如我们利用io事件驱动设计的、按照事物类型划分好合适比例的线程池，在响应时间上，协作调度是硬伤。)</p>
 
-<pre><code class="language-go">0xc04202ff60 10
-0xc04202ff60 10
-0xc04202ff60 30
-0xc04202ff60 30
-</code></pre>
-
-<p>并非所有对象都能进行取地址操作
-指针类型不能做加减运算和类型转换</p>
-
-<h2 id="复合类型变量的初始化">复合类型变量的初始化</h2>
-
-<p>一些语法限制
-- 初始化表达式必须含类型标签
-- 左花括号必须在类型尾部，不能另起一行
-- 多个成员的初始值以逗号分开
-- 允许多行，但每行必须以逗号或者右花括号结束</p>
-
-<h2 id="流控制">流控制</h2>
-
-<h5 id="if-else">if&hellip;else&hellip;</h5>
-
-<p>条件表达式必须是布尔类型 ，可以省略括号
-可以在条件表达式前加初始化语句，可定义块局部变量（作用域是该<code>if</code>语句或执行 初始化函数。</p>
-
-<h3 id="switch">switch</h3>
-
-<p>某条<code>case</code>语句里有多个条件时，只要有一个命中即可匹配
-如果有<code>default</code>,在全部<code>case</code>执行失败后才会执行<code>default</code>语句。
-不能重复出现常量<code>case</code>条件。
-相邻的空<code>case</code>不构成多条件匹配，<code>case</code>内容为空默认包含一个<code>break</code>语句。</p>
-
-<pre><code class="language-go"> switch x {
- case a:
- case b:
-	 println(&quot;b&quot;)
- }
-</code></pre>
-
-<h4 id="fallthrough">fallthrough</h4>
-
-<p>如需贯通后续的<code>case</code>,需执行<code>fallthrough。</code>
-当有<code>fallthrough</code>时，不必匹配后续条件表达式。</p>
-
-<pre><code>func main() {
-	switch x:=5;x{
-	default:
-		println(x)
-	case 5:
-		x+=10
-		println(x)
-		fallthrough
-	case 10:
-		println(x)
-	}
-}
-</code></pre>
-
-<p>output</p>
-
-<pre><code>15
-15
-</code></pre>
-
-<p><code>fallthrough</code>必须放在<code>case</code>结尾处，可以使用<code>break</code>阻止执行。</p>
-
-<h3 id="for">for</h3>
-
-<p><code>go</code>语言只有一种循环，但是常见方法都能支持。
-常见写法</p>
-
-<pre><code class="language-go">for i=0;i&lt;3;i++{ //初始化表达式支持函数调用或者定义局变量
-}
-
-for x&lt;10{ //类似“while x&lt;10{}”
-}
-
-for { //类似“while true{}”
-	break
-}
-</code></pre>
-
-<p>可用<code>for...rang</code>完成数据迭代，支持字符串、数组、数组指针、切片、字典、通道类型，返回索引、键值数据。</p>
-
-<pre><code class="language-go">func main() {
-	data := [3]string{&quot;a&quot;,&quot;b&quot;,&quot;c&quot;}
-	for i,s := range data{
-		println(i,s)
-	}
-
-}
-</code></pre>
-
-<p>允许单返回值，或者使用<code>_</code>忽略。</p>
-
-<pre><code class="language-go"> func main() {
-	data := [3]string{&quot;a&quot;,&quot;b&quot;,&quot;c&quot;}
-	for i := range data{
-		println(i)
-	}
-
-}
-</code></pre>
-
-<pre><code class="language-go">func main() {
-	data := [3]string{&quot;a&quot;,&quot;b&quot;,&quot;c&quot;}
-	for _,s := range data{
-		println(s)
-	}
-
-}
-</code></pre>
-
-<p>但是<code>range</code>也有个大坑，就是定义的局部变量会重复使用，即一个地址多次写值。
-详见本博客博文《go语言坑之for range》。
-如果<code>range</code>的目标表达式是函数优化，也仅被执行一次。</p>
-
-<pre><code class="language-go">func main() {
-	for i,s := range data(){
-		println(i,s)
-	}
-
-}
-func data() []int {
-	println(&quot;origin data.&quot;)
-	return []int{10,20,30}
-}
-</code></pre>
-
-<p>output</p>
-
-<pre><code>origin data.
-0 10
-1 20
-2 30
-</code></pre>
-
-<p><code>goto</code> <code>continue</code> <code>break</code>略过。</p>
+<p>挖坑：goroutine的详细底层实现和应用</p>
               
             </div>
           </div>
@@ -460,9 +323,9 @@ func data() []int {
                   <div class="post-footer-tags">
                     <span class="text-color-light text-small">TAGGED IN</span><br/>
                     
-  <a class="tag tag--primary tag--small" href="https://arbusz.github.io/tags/development/">Development</a>
+  <a class="tag tag--primary tag--small" href="https://arbusz.github.io/tags/goroutine/">goroutine</a>
 
-  <a class="tag tag--primary tag--small" href="https://arbusz.github.io/tags/golang/">golang</a>
+  <a class="tag tag--primary tag--small" href="https://arbusz.github.io/tags/coroutine/">coroutine</a>
 
                   </div>
                 
@@ -475,7 +338,7 @@ func data() []int {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/" data-tooltip="Go语言笔记－函数">
+                <a class="post-action-btn btn btn--disabled">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -483,7 +346,7 @@ func data() []int {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/03/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/" data-tooltip="Go语言笔记－类型">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/" data-tooltip="一个遍历目录的小程序">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -501,19 +364,19 @@ func data() []int {
         </li>
         
           <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://arbusz.github.io/2018/07/%E5%8D%8F%E7%A8%8Bcoroutines/">
               <i class="fa fa-facebook-official"></i>
             </a>
           </li>
         
           <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://arbusz.github.io/2018/07/%E5%8D%8F%E7%A8%8Bcoroutines/">
               <i class="fa fa-twitter"></i>
             </a>
           </li>
         
           <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://arbusz.github.io/2018/07/%E5%8D%8F%E7%A8%8Bcoroutines/">
               <i class="fa fa-google-plus"></i>
             </a>
           </li>
@@ -561,7 +424,7 @@ func data() []int {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/" data-tooltip="Go语言笔记－函数">
+                <a class="post-action-btn btn btn--disabled">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -569,7 +432,7 @@ func data() []int {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/03/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/" data-tooltip="Go语言笔记－类型">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/" data-tooltip="一个遍历目录的小程序">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -587,19 +450,19 @@ func data() []int {
         </li>
         
           <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://arbusz.github.io/2018/07/%E5%8D%8F%E7%A8%8Bcoroutines/">
               <i class="fa fa-facebook-official"></i>
             </a>
           </li>
         
           <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://arbusz.github.io/2018/07/%E5%8D%8F%E7%A8%8Bcoroutines/">
               <i class="fa fa-twitter"></i>
             </a>
           </li>
         
           <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://arbusz.github.io/2018/07/%E5%8D%8F%E7%A8%8Bcoroutines/">
               <i class="fa fa-google-plus"></i>
             </a>
           </li>
@@ -629,19 +492,19 @@ func data() []int {
   <ul class="share-options">
     
       <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Farbusz.github.io%2F2018%2F05%2Fgo%25E8%25AF%25AD%25E8%25A8%2580%25E7%25AC%2594%25E8%25AE%25B0%25E8%25A1%25A8%25E8%25BE%25BE%25E5%25BC%258F%2F">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Farbusz.github.io%2F2018%2F07%2F%25E5%258D%258F%25E7%25A8%258Bcoroutines%2F">
           <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
         </a>
       </li>
     
       <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Farbusz.github.io%2F2018%2F05%2Fgo%25E8%25AF%25AD%25E8%25A8%2580%25E7%25AC%2594%25E8%25AE%25B0%25E8%25A1%25A8%25E8%25BE%25BE%25E5%25BC%258F%2F">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Farbusz.github.io%2F2018%2F07%2F%25E5%258D%258F%25E7%25A8%258Bcoroutines%2F">
           <i class="fa fa-twitter"></i><span>Share on Twitter</span>
         </a>
       </li>
     
       <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https%3A%2F%2Farbusz.github.io%2F2018%2F05%2Fgo%25E8%25AF%25AD%25E8%25A8%2580%25E7%25AC%2594%25E8%25AE%25B0%25E8%25A1%25A8%25E8%25BE%25BE%25E5%25BC%258F%2F">
+        <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https%3A%2F%2Farbusz.github.io%2F2018%2F07%2F%25E5%258D%258F%25E7%25A8%258Bcoroutines%2F">
           <i class="fa fa-google-plus"></i><span>Share on Google&#43;</span>
         </a>
       </li>
@@ -849,9 +712,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/arbusz.github.io\/2018\/05\/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F\/';
+          this.page.url = 'https:\/\/arbusz.github.io\/2018\/07\/%E5%8D%8F%E7%A8%8Bcoroutines\/';
           
-            this.page.identifier = '\/2018\/05\/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F\/'
+            this.page.identifier = '\/2018\/07\/%E5%8D%8F%E7%A8%8Bcoroutines\/'
           
         };
         (function() {

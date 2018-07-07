@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://arbusz.github.io/2018/07/%E5%8D%8F%E7%A8%8Bcoroutines/</loc>
+    <lastmod>2018-07-07T21:06:58+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/</loc>
     <lastmod>2018-07-05T08:19:34+08:00</lastmod>
   </url>
@@ -29,7 +34,7 @@
   
   <url>
     <loc>https://arbusz.github.io/</loc>
-    <lastmod>2018-07-05T08:19:34+08:00</lastmod>
+    <lastmod>2018-07-07T21:06:58+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -44,8 +49,8 @@
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/categories/development/</loc>
-    <lastmod>2018-05-20T19:59:36+08:00</lastmod>
+    <loc>https://arbusz.github.io/tags/coroutine/</loc>
+    <lastmod>2018-07-07T21:06:58+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -56,8 +61,14 @@
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/categories/golang/</loc>
-    <lastmod>2018-07-05T08:19:34+08:00</lastmod>
+    <loc>https://arbusz.github.io/categories/development/</loc>
+    <lastmod>2018-05-20T19:59:36+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://arbusz.github.io/categories/goland/</loc>
+    <lastmod>2018-07-07T21:06:58+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -68,20 +79,38 @@
   </url>
   
   <url>
+    <loc>https://arbusz.github.io/categories/golang/</loc>
+    <lastmod>2018-07-05T08:19:34+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://arbusz.github.io/tags/goroutine/</loc>
+    <lastmod>2018-07-07T21:06:58+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://arbusz.github.io/tags/nil/</loc>
     <lastmod>2018-06-04T21:26:20+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
+    <loc>https://arbusz.github.io/categories/os/</loc>
+    <lastmod>2018-07-07T21:06:58+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://arbusz.github.io/post/</loc>
-    <lastmod>2018-07-05T08:19:34+08:00</lastmod>
+    <lastmod>2018-07-07T21:06:58+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://arbusz.github.io/tags/</loc>
-    <lastmod>2018-05-20T19:59:36+08:00</lastmod>
+    <lastmod>2018-07-07T21:06:58+08:00</lastmod>
     <priority>0</priority>
   </url>
   
