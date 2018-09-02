@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Go on Arbus&#39;s Little Site</title>
+    <link>https://arbusz.github.io/tags/go/</link>
+    <description>Recent content in Go on Arbus&#39;s Little Site</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 02 Sep 2018 17:10:44 +0800</lastBuildDate>
+    
+	<atom:link href="https://arbusz.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>配置vim用于go开发</title>
+      <link>https://arbusz.github.io/2018/09/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/</link>
+      <pubDate>Sun, 02 Sep 2018 17:10:44 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/2018/09/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/</guid>
+      <description>因为服务器没有图形界面，所以项配置一个vim作为go语言开发工具。 服务器是centos，所以以下命令适用于centos系统：
+首先检查vim是否开启Python支持： 运行vim --version |grep python 如果打印出的Python前面是减号，说明没有加入python支持，后面配置YCM就会报错。所以让我们重新编译vim。 更新源
+sudo yum upgrade sduo yum update  升级gcc
+sudo yum install centos-release-scl -y sudo yum install devtoolset-3-toolchain -y sudo yum install gcc-c++ sudo scl enable devtoolset-3 bash  安装Python开发环境
+sudo yum upgrade sudo yum install python-devel  升级vim
+yum install ncurses-devel wget https://github.com/vim/vim/archive/master.zip unzip master.zip cd vim-master cd src/ ./configure --with-features=huge -enable-pythoninterp --with-python-config-dir=/usr/lib/python2.7/config sudo make sudo make install export PATH=/usr/local/bin:$PATH  准备工作就绪，可以下载编译YCM了 git clone https://github.</description>
+    </item>
+    
+  </channel>
+</rss>

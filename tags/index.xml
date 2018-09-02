@@ -6,7 +6,7 @@
     <description>Recent content in Tags on Arbus&#39;s Little Site</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 07 Jul 2018 21:06:58 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 20 May 2018 19:59:36 +0800</lastBuildDate>
     
 	<atom:link href="https://arbusz.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Coroutine</title>
       <link>https://arbusz.github.io/tags/coroutine/</link>
-      <pubDate>Sat, 07 Jul 2018 21:06:58 +0800</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://arbusz.github.io/tags/coroutine/</guid>
       <description></description>
@@ -30,6 +30,15 @@
     </item>
     
     <item>
+      <title>Go</title>
+      <link>https://arbusz.github.io/tags/go/</link>
+      <pubDate>Sun, 02 Sep 2018 17:10:44 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/tags/go/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Golang</title>
       <link>https://arbusz.github.io/tags/golang/</link>
       <pubDate>Thu, 05 Jul 2018 08:19:34 +0800</pubDate>
@@ -41,7 +50,7 @@
     <item>
       <title>Goroutine</title>
       <link>https://arbusz.github.io/tags/goroutine/</link>
-      <pubDate>Sat, 07 Jul 2018 21:06:58 +0800</pubDate>
+      <pubDate>Sun, 02 Sep 2018 17:02:35 +0800</pubDate>
       
       <guid>https://arbusz.github.io/tags/goroutine/</guid>
       <description></description>
@@ -57,11 +66,38 @@
     </item>
     
     <item>
+      <title>Vim</title>
+      <link>https://arbusz.github.io/tags/vim/</link>
+      <pubDate>Sun, 02 Sep 2018 17:10:44 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/tags/vim/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>代码</title>
       <link>https://arbusz.github.io/tags/%E4%BB%A3%E7%A0%81/</link>
       <pubDate>Thu, 05 Jul 2018 08:19:34 +0800</pubDate>
       
       <guid>https://arbusz.github.io/tags/%E4%BB%A3%E7%A0%81/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>分布式</title>
+      <link>https://arbusz.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/</link>
+      <pubDate>Sun, 02 Sep 2018 17:08:32 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>并发</title>
+      <link>https://arbusz.github.io/tags/%E5%B9%B6%E5%8F%91/</link>
+      <pubDate>Sun, 02 Sep 2018 17:02:35 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/tags/%E5%B9%B6%E5%8F%91/</guid>
       <description></description>
     </item>
     

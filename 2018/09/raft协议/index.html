@@ -1,0 +1,932 @@
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+  
+
+
+  
+
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.40.1 with theme Tranquilpeak 0.4.3-BETA">
+    <title>Raft协议</title>
+    <meta name="author" content="Arbus">
+    <meta name="keywords" content="Raft, 分布式">
+
+    <link rel="icon" href="https://arbusz.github.io/favicon.png">
+    
+
+    
+    <meta name="description" content="分布式存储系统通常采用多个副本进行容错，提高系统的可用性。要实现此目标，就必须要解决分布式存储系统的最核心问题，维护多个副本的一致性。 &gt; 一致性是构建容错性的分布式系统的基础。在一个具有一致性的性质的集群里，同一时刻所有的节点对存储在其中的某个值都有相同的结果，即对其共享的存储保持一致性。集群具有自动恢复的性质，少数节点失效时不会影响整个集群的正常工作。
+说白了，一致性就是保证即使在部分副本宕机时，系统仍然能正常对外提供服务。一致性协议通常基于replicated state machines，即所有结点都从同一个state出发，都经过同样的一些操作序列（log），最后到达同样的state。 &gt;系统中每个节点有三个组件 &gt;- 状态机：当我们说一致性的时候，实际就是在说要保证这个状态机的一致性。状态机会从log里面取出所有的命令，然后执行一遍，得到的结果就是我们对外提供的保证了一致性的数据 &gt;- log：保存了所有修改记录 &gt;- 一致性模块：一致性模块算法就是用来保证写入的log的命令的一致性，这也是raft算法核心内容
+Raft协议将一致性协议的核心内容分拆成为几个关键阶段，以简化流程，提高协议的可理解性。
+1. Leader election（选主） Raft协议的每个副本都会处于三种状态之一：Leader、Follower、Candidate。 &gt;- Leader：所有请求的处理者，Leader副本接受client的更新请求，本地处理后再同步至多个其他副本； &gt;- Follower：请求的被动更新者，从Leader接受更新请求，然后写入本地日志文件 &gt;- Candidate：如果Follower副本在一段时间内没有收到Leader副本的心跳，则判断Leader可能已经故障，此时启动选主过程，此时副本会变成Candidate状态，直到选主结束。
+时间被分为很多连续的随机长度term，term有唯一的Id。每个id一开始就进行选主。 - 1.Follower将自己维护的current_term_id加1 - 2.将自己的状态转为Candidate - 3.发送RequestVoteRPC消息（附带current_term_id）给其他所有server
+此过程会有三种结果： - 自己被选为主。当收到majority的投票后，状态切成了Leader，并定期给其他的所有的server发心跳消息（不带log的AppendEntriesRPC）以告诉对方自己是current_term_id所标识的term的Leader。每个term最多有一个leader，term id作为logical lock，在每个RPC消息中都会带上，用于检测过期的消息。当一个server收到的RPC消息中的rpc_term_id比本地的current_term_id更大时，就更新 current_term_id为rpc_term_id，并且如果当前state为Leader或者Candidate时，将自己的状态切为Follower。如果更小，则拒绝这个消息。 - 别人成了主。当Candidate在等待投票的过程中，收到了大于或者等与本地的current_term_id声明对方是Leader的AppendEnteriesRPC时，则将自己的的state切换为Follower，并更新自己本地的current_term_id。 - 没有选出主。没有Leader被选出，每个Candidate等待投票的额过程就已超时，接着Candidates就会将本地的current_term_id再加一，发起RequestVoteRPC进行新一轮的Leader election。
+投票策略： - 每个节点只会给每个term投一票，具体的是否同意和后续的Safety有关。 - 当投票被瓜分后，所有的Candidate同时超时，然后有可能进入新一轮的票数被瓜分。为了避免这个问题，Raft采用一种很简单的方法：每个Candidate的election timeout从150ms-300ms之间随机取，那么第一个超时的Candidate就可以发起新一轮的leader election，带着最大的term_id给其它所有server发送RequestVoteRPC消息，从而自己成为leader，然后给他们发送心跳消息以告诉他们自己是主。
+ Raft有2个timeout设置 1）从follow而转换到candidate的timeout： election timeout，设置为：150ms到300ms中的随机数。一个node到达这个timeout之后会发起一个新的选举term（递增的，大的表示新的），向其他节点发起投票请求，包括投给自己的那票，如果获得了大多数选票，那么自己就转换为leader状态 2）node成为leader之后会向其他node发送Append Entries，这个时间为heartbeat timeout 如果lead在实际使用中down掉，剩下的节点会重新开启1）和2）描述的选举流程，保证了高可用性 特殊情况:
+如果集群中剩下偶数个node，并且在选举的过程中有2个node获得相等的选票数，那么会开启新的一轮term选举。直到有一个node获得多数选票（随机的election timeout保证可行） 2. Log Replication 当Leader被选出来后，就可以接受客户端发来的请求了，每个请求包含一条需要被replicated state machines执行的命令。leader会把它作为一个log entry append到日志中，然后给其它的server发AppendEntriesRPC请求。当Leader确定一个log entry被safely replicated了（大多数副本已经将该命令写入日志当中），就apply这条log entry到状态机中然后返回结果给客户端。如果某个Follower宕机了或者运行的很慢，或者网络丢包了，则会一直给这个Follower发AppendEntriesRPC直到日志一致。">
+    <meta property="og:description" content="分布式存储系统通常采用多个副本进行容错，提高系统的可用性。要实现此目标，就必须要解决分布式存储系统的最核心问题，维护多个副本的一致性。 &gt; 一致性是构建容错性的分布式系统的基础。在一个具有一致性的性质的集群里，同一时刻所有的节点对存储在其中的某个值都有相同的结果，即对其共享的存储保持一致性。集群具有自动恢复的性质，少数节点失效时不会影响整个集群的正常工作。
+说白了，一致性就是保证即使在部分副本宕机时，系统仍然能正常对外提供服务。一致性协议通常基于replicated state machines，即所有结点都从同一个state出发，都经过同样的一些操作序列（log），最后到达同样的state。 &gt;系统中每个节点有三个组件 &gt;- 状态机：当我们说一致性的时候，实际就是在说要保证这个状态机的一致性。状态机会从log里面取出所有的命令，然后执行一遍，得到的结果就是我们对外提供的保证了一致性的数据 &gt;- log：保存了所有修改记录 &gt;- 一致性模块：一致性模块算法就是用来保证写入的log的命令的一致性，这也是raft算法核心内容
+Raft协议将一致性协议的核心内容分拆成为几个关键阶段，以简化流程，提高协议的可理解性。
+1. Leader election（选主） Raft协议的每个副本都会处于三种状态之一：Leader、Follower、Candidate。 &gt;- Leader：所有请求的处理者，Leader副本接受client的更新请求，本地处理后再同步至多个其他副本； &gt;- Follower：请求的被动更新者，从Leader接受更新请求，然后写入本地日志文件 &gt;- Candidate：如果Follower副本在一段时间内没有收到Leader副本的心跳，则判断Leader可能已经故障，此时启动选主过程，此时副本会变成Candidate状态，直到选主结束。
+时间被分为很多连续的随机长度term，term有唯一的Id。每个id一开始就进行选主。 - 1.Follower将自己维护的current_term_id加1 - 2.将自己的状态转为Candidate - 3.发送RequestVoteRPC消息（附带current_term_id）给其他所有server
+此过程会有三种结果： - 自己被选为主。当收到majority的投票后，状态切成了Leader，并定期给其他的所有的server发心跳消息（不带log的AppendEntriesRPC）以告诉对方自己是current_term_id所标识的term的Leader。每个term最多有一个leader，term id作为logical lock，在每个RPC消息中都会带上，用于检测过期的消息。当一个server收到的RPC消息中的rpc_term_id比本地的current_term_id更大时，就更新 current_term_id为rpc_term_id，并且如果当前state为Leader或者Candidate时，将自己的状态切为Follower。如果更小，则拒绝这个消息。 - 别人成了主。当Candidate在等待投票的过程中，收到了大于或者等与本地的current_term_id声明对方是Leader的AppendEnteriesRPC时，则将自己的的state切换为Follower，并更新自己本地的current_term_id。 - 没有选出主。没有Leader被选出，每个Candidate等待投票的额过程就已超时，接着Candidates就会将本地的current_term_id再加一，发起RequestVoteRPC进行新一轮的Leader election。
+投票策略： - 每个节点只会给每个term投一票，具体的是否同意和后续的Safety有关。 - 当投票被瓜分后，所有的Candidate同时超时，然后有可能进入新一轮的票数被瓜分。为了避免这个问题，Raft采用一种很简单的方法：每个Candidate的election timeout从150ms-300ms之间随机取，那么第一个超时的Candidate就可以发起新一轮的leader election，带着最大的term_id给其它所有server发送RequestVoteRPC消息，从而自己成为leader，然后给他们发送心跳消息以告诉他们自己是主。
+ Raft有2个timeout设置 1）从follow而转换到candidate的timeout： election timeout，设置为：150ms到300ms中的随机数。一个node到达这个timeout之后会发起一个新的选举term（递增的，大的表示新的），向其他节点发起投票请求，包括投给自己的那票，如果获得了大多数选票，那么自己就转换为leader状态 2）node成为leader之后会向其他node发送Append Entries，这个时间为heartbeat timeout 如果lead在实际使用中down掉，剩下的节点会重新开启1）和2）描述的选举流程，保证了高可用性 特殊情况:
+如果集群中剩下偶数个node，并且在选举的过程中有2个node获得相等的选票数，那么会开启新的一轮term选举。直到有一个node获得多数选票（随机的election timeout保证可行） 2. Log Replication 当Leader被选出来后，就可以接受客户端发来的请求了，每个请求包含一条需要被replicated state machines执行的命令。leader会把它作为一个log entry append到日志中，然后给其它的server发AppendEntriesRPC请求。当Leader确定一个log entry被safely replicated了（大多数副本已经将该命令写入日志当中），就apply这条log entry到状态机中然后返回结果给客户端。如果某个Follower宕机了或者运行的很慢，或者网络丢包了，则会一直给这个Follower发AppendEntriesRPC直到日志一致。">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Raft协议">
+    <meta property="og:url" content="/2018/09/raft%E5%8D%8F%E8%AE%AE/">
+    <meta property="og:site_name" content="Arbus&#39;s Little Site">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Arbus&#39;s Little Site">
+    <meta name="twitter:description" content="分布式存储系统通常采用多个副本进行容错，提高系统的可用性。要实现此目标，就必须要解决分布式存储系统的最核心问题，维护多个副本的一致性。 &gt; 一致性是构建容错性的分布式系统的基础。在一个具有一致性的性质的集群里，同一时刻所有的节点对存储在其中的某个值都有相同的结果，即对其共享的存储保持一致性。集群具有自动恢复的性质，少数节点失效时不会影响整个集群的正常工作。
+说白了，一致性就是保证即使在部分副本宕机时，系统仍然能正常对外提供服务。一致性协议通常基于replicated state machines，即所有结点都从同一个state出发，都经过同样的一些操作序列（log），最后到达同样的state。 &gt;系统中每个节点有三个组件 &gt;- 状态机：当我们说一致性的时候，实际就是在说要保证这个状态机的一致性。状态机会从log里面取出所有的命令，然后执行一遍，得到的结果就是我们对外提供的保证了一致性的数据 &gt;- log：保存了所有修改记录 &gt;- 一致性模块：一致性模块算法就是用来保证写入的log的命令的一致性，这也是raft算法核心内容
+Raft协议将一致性协议的核心内容分拆成为几个关键阶段，以简化流程，提高协议的可理解性。
+1. Leader election（选主） Raft协议的每个副本都会处于三种状态之一：Leader、Follower、Candidate。 &gt;- Leader：所有请求的处理者，Leader副本接受client的更新请求，本地处理后再同步至多个其他副本； &gt;- Follower：请求的被动更新者，从Leader接受更新请求，然后写入本地日志文件 &gt;- Candidate：如果Follower副本在一段时间内没有收到Leader副本的心跳，则判断Leader可能已经故障，此时启动选主过程，此时副本会变成Candidate状态，直到选主结束。
+时间被分为很多连续的随机长度term，term有唯一的Id。每个id一开始就进行选主。 - 1.Follower将自己维护的current_term_id加1 - 2.将自己的状态转为Candidate - 3.发送RequestVoteRPC消息（附带current_term_id）给其他所有server
+此过程会有三种结果： - 自己被选为主。当收到majority的投票后，状态切成了Leader，并定期给其他的所有的server发心跳消息（不带log的AppendEntriesRPC）以告诉对方自己是current_term_id所标识的term的Leader。每个term最多有一个leader，term id作为logical lock，在每个RPC消息中都会带上，用于检测过期的消息。当一个server收到的RPC消息中的rpc_term_id比本地的current_term_id更大时，就更新 current_term_id为rpc_term_id，并且如果当前state为Leader或者Candidate时，将自己的状态切为Follower。如果更小，则拒绝这个消息。 - 别人成了主。当Candidate在等待投票的过程中，收到了大于或者等与本地的current_term_id声明对方是Leader的AppendEnteriesRPC时，则将自己的的state切换为Follower，并更新自己本地的current_term_id。 - 没有选出主。没有Leader被选出，每个Candidate等待投票的额过程就已超时，接着Candidates就会将本地的current_term_id再加一，发起RequestVoteRPC进行新一轮的Leader election。
+投票策略： - 每个节点只会给每个term投一票，具体的是否同意和后续的Safety有关。 - 当投票被瓜分后，所有的Candidate同时超时，然后有可能进入新一轮的票数被瓜分。为了避免这个问题，Raft采用一种很简单的方法：每个Candidate的election timeout从150ms-300ms之间随机取，那么第一个超时的Candidate就可以发起新一轮的leader election，带着最大的term_id给其它所有server发送RequestVoteRPC消息，从而自己成为leader，然后给他们发送心跳消息以告诉他们自己是主。
+ Raft有2个timeout设置 1）从follow而转换到candidate的timeout： election timeout，设置为：150ms到300ms中的随机数。一个node到达这个timeout之后会发起一个新的选举term（递增的，大的表示新的），向其他节点发起投票请求，包括投给自己的那票，如果获得了大多数选票，那么自己就转换为leader状态 2）node成为leader之后会向其他node发送Append Entries，这个时间为heartbeat timeout 如果lead在实际使用中down掉，剩下的节点会重新开启1）和2）描述的选举流程，保证了高可用性 特殊情况:
+如果集群中剩下偶数个node，并且在选举的过程中有2个node获得相等的选票数，那么会开启新的一轮term选举。直到有一个node获得多数选票（随机的election timeout保证可行） 2. Log Replication 当Leader被选出来后，就可以接受客户端发来的请求了，每个请求包含一条需要被replicated state machines执行的命令。leader会把它作为一个log entry append到日志中，然后给其它的server发AppendEntriesRPC请求。当Leader确定一个log entry被safely replicated了（大多数副本已经将该命令写入日志当中），就apply这条log entry到状态机中然后返回结果给客户端。如果某个Follower宕机了或者运行的很慢，或者网络丢包了，则会一直给这个Follower发AppendEntriesRPC直到日志一致。">
+    
+    
+
+    
+    
+
+    
+      <meta property="og:image" content="//www.gravatar.com/avatar/7c65f43625271645a726047600797446?s=640">
+    
+
+    
+    
+    
+
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://arbusz.github.io/css/style-jsjn0006wyhpyzivf6yceb31gvpjatbcs3qzjvlumobfnugccvobqwxnnaj8.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://arbusz.github.io/">Arbus&#39;s Little Site</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://arbusz.github.io/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="//www.gravatar.com/avatar/7c65f43625271645a726047600797446?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://arbusz.github.io/#about">
+          <img class="sidebar-profile-picture" src="//www.gravatar.com/avatar/7c65f43625271645a726047600797446?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Arbus</h4>
+        
+          <h5 class="sidebar-profile-bio">A student from DLUT.</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/">
+    
+      
+      
+      <span class="sidebar-button-desc">Go语言笔记－函数</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/03/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/">
+    
+      
+      
+      <span class="sidebar-button-desc">Go语言笔记－类型</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+    
+      
+      
+      <span class="sidebar-button-desc">Go语言笔记－表达式</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/">
+    
+      
+      
+      <span class="sidebar-button-desc">包含nil指针的接口和nil接口</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/Arbusz" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      Raft协议
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-09-02T17:08:32&#43;08:00">
+        
+  
+  
+  
+  
+    2 September 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://arbusz.github.io/categories/%e5%88%86%e5%b8%83%e5%bc%8f%e5%8d%8f%e8%ae%ae">分布式协议</a>, 
+    
+      <a class="category-link" href="https://arbusz.github.io/categories/%e5%88%86%e5%b8%83%e5%bc%8f%e7%b3%bb%e7%bb%9f">分布式系统</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p>
+分布式存储系统通常采用多个副本进行容错，提高系统的可用性。要实现此目标，就必须要解决分布式存储系统的最核心问题，维护多个副本的一致性。
+&gt; 一致性是构建容错性的分布式系统的基础。在一个具有一致性的性质的集群里，同一时刻所有的节点对存储在其中的某个值都有相同的结果，即对其共享的存储保持一致性。集群具有自动恢复的性质，少数节点失效时不会影响整个集群的正常工作。</p>
+
+<p>说白了，一致性就是保证即使在部分副本宕机时，系统仍然能正常对外提供服务。一致性协议通常基于replicated state machines，即所有结点都从同一个state出发，都经过同样的一些操作序列（log），最后到达同样的state。
+&gt;系统中每个节点有三个组件
+&gt;- 状态机：当我们说一致性的时候，实际就是在说要保证这个状态机的一致性。状态机会从log里面取出所有的命令，然后执行一遍，得到的结果就是我们对外提供的保证了一致性的数据
+&gt;- log：保存了所有修改记录
+&gt;- 一致性模块：一致性模块算法就是用来保证写入的log的命令的一致性，这也是raft算法核心内容</p>
+
+<p>Raft协议将一致性协议的核心内容分拆成为几个关键阶段，以简化流程，提高协议的可理解性。</p>
+
+<hr />
+
+<h2 id="1-leader-election-选主">1. Leader election（选主）</h2>
+
+<p>Raft协议的每个副本都会处于三种状态之一：Leader、Follower、Candidate。
+&gt;- Leader：所有请求的处理者，Leader副本接受client的更新请求，本地处理后再同步至多个其他副本；
+&gt;- Follower：请求的被动更新者，从Leader接受更新请求，然后写入本地日志文件
+&gt;- Candidate：如果Follower副本在一段时间内没有收到Leader副本的心跳，则判断Leader可能已经故障，此时启动选主过程，此时副本会变成Candidate状态，直到选主结束。</p>
+
+<p>时间被分为很多连续的随机长度term，term有唯一的Id。每个id一开始就进行选主。
+- 1.Follower将自己维护的current_term_id加1
+- 2.将自己的状态转为Candidate
+- 3.发送RequestVoteRPC消息（附带current_term_id）给其他所有server</p>
+
+<p>此过程会有三种结果：
+- 自己被选为主。当收到majority的投票后，状态切成了Leader，并定期给其他的所有的server发心跳消息（不带log的AppendEntriesRPC）以告诉对方自己是current_term_id所标识的term的Leader。每个term最多有一个leader，term id作为logical lock，在每个RPC消息中都会带上，用于检测过期的消息。当一个server收到的RPC消息中的rpc_term_id比本地的current_term_id更大时，就更新
+current_term_id为rpc_term_id，并且如果当前state为Leader或者Candidate时，将自己的状态切为Follower。如果更小，则拒绝这个消息。
+- 别人成了主。当Candidate在等待投票的过程中，收到了大于或者等与本地的current_term_id声明对方是Leader的AppendEnteriesRPC时，则将自己的的state切换为Follower，并更新自己本地的current_term_id。
+- 没有选出主。没有Leader被选出，每个Candidate等待投票的额过程就已超时，接着Candidates就会将本地的current_term_id再加一，发起RequestVoteRPC进行新一轮的Leader election。</p>
+
+<p>投票策略：
+- 每个节点只会给每个term投一票，具体的是否同意和后续的Safety有关。
+- 当投票被瓜分后，所有的Candidate同时超时，然后有可能进入新一轮的票数被瓜分。为了避免这个问题，Raft采用一种很简单的方法：每个Candidate的election timeout从150ms-300ms之间随机取，那么第一个超时的Candidate就可以发起新一轮的leader election，带着最大的term_id给其它所有server发送RequestVoteRPC消息，从而自己成为leader，然后给他们发送心跳消息以告诉他们自己是主。</p>
+
+<blockquote>
+<p>Raft有2个timeout设置
+1）从follow而转换到candidate的timeout： election timeout，设置为：150ms到300ms中的随机数。一个node到达这个timeout之后会发起一个新的选举term（递增的，大的表示新的），向其他节点发起投票请求，包括投给自己的那票，如果获得了大多数选票，那么自己就转换为leader状态
+2）node成为leader之后会向其他node发送Append Entries，这个时间为heartbeat timeout
+如果lead在实际使用中down掉，剩下的节点会重新开启1）和2）描述的选举流程，保证了高可用性
+<em>特殊情况:</em></p>
+
+<h2 id="如果集群中剩下偶数个node-并且在选举的过程中有2个node获得相等的选票数-那么会开启新的一轮term选举-直到有一个node获得多数选票-随机的election-timeout保证可行">如果集群中剩下偶数个node，并且在选举的过程中有2个node获得相等的选票数，那么会开启新的一轮term选举。直到有一个node获得多数选票（随机的election timeout保证可行）</h2>
+
+<h2 id="2-log-replication">2. Log Replication</h2>
+
+<p>当Leader被选出来后，就可以接受客户端发来的请求了，每个请求包含一条需要被replicated state machines执行的命令。leader会把它作为一个log entry append到日志中，然后给其它的server发AppendEntriesRPC请求。当Leader确定一个log entry被safely replicated了（大多数副本已经将该命令写入日志当中），就apply这条log entry到状态机中然后返回结果给客户端。如果某个Follower宕机了或者运行的很慢，或者网络丢包了，则会一直给这个Follower发AppendEntriesRPC直到日志一致。</p>
+</blockquote>
+
+<p>当一条日志是commited时，Leader才可以将它应用到状态机中。Raft保证一条commited的log entry已经持久化了并且会被所有的节点执行。</p>
+
+<h4 id="如果leader和其他fellower的日志不同怎么办">如果Leader和其他Fellower的日志不同怎么办</h4>
+
+<p>我们需要一个机制来保证日志的一致性</p>
+
+<p>如图中例子，最上面这个是新Leader，a~f是Follower，每个格子代表一条log entry，格子内的数字代表这个log entry是在哪个term上产生的。</p>
+
+<p>新Leader产生后，就以Leader上的log为准。其它的follower要么少了数据比如b，要么多了数据，比如d，要么既少了又多了数据，比如f。</p>
+
+<p>因此，需要有一种机制来让leader和follower对log达成一致，leader会为每个follower维护一个nextIndex，表示leader给各个follower发送的下一条log entry在log中的index，初始化为leader的最后一条log entry的下一个位置。leader给follower发送AppendEntriesRPC消息，带着(term_id, (nextIndex-1))， term_id即(nextIndex-1)这个槽位的log entry的term_id，follower接收到AppendEntriesRPC后，会从自己的log中找是不是存在这样的log entry，如果不存在，就给leader回复拒绝消息，然后leader则将nextIndex减1，再重复，知道AppendEntriesRPC消息被接收。</p>
+
+<p>以leader和b为例：</p>
+
+<p>初始化，nextIndex为11，leader给b发送AppendEntriesRPC(6,10)，b在自己log的10号槽位中没有找到term_id为6的log entry。则给leader回应一个拒绝消息。接着，leader将nextIndex减一，变成10，然后给b发送AppendEntriesRPC(6, 9)，b在自己log的9号槽位中同样没有找到term_id为6的log entry。循环下去，直到leader发送了AppendEntriesRPC(4,4)，b在自己log的槽位4中找到了term_id为4的log entry。接收了消息。随后，leader就可以从槽位5开始给b推送日志了。</p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/4593875-a9ace666b3f34c80.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="example" /></p>
+
+<h3 id="safety">Safety</h3>
+
+<h4 id="哪些follower有资格成为leader">哪些follower有资格成为leader?</h4>
+
+<blockquote>
+<p>Raft保证被选为新leader的节点拥有所有已提交的log entry，这与ViewStamped Replication不同，后者不需要这个保证，而是通过其他机制从follower拉取自己没有的提交的日志记录</p>
+</blockquote>
+
+<p>这个保证是在RequestVoteRPC阶段做的，candidate在发送RequestVoteRPC时，会带上自己的最后一条日志记录的term_id和index，其他节点收到消息时，如果发现自己的日志比RPC请求中携带的更新，拒绝投票。日志比较的原则是，如果本地的最后一条log entry的term id更大，则更新，如果term id一样大，则日志更多的更大(index更大)。</p>
+
+<h4 id="哪些日志记录被认为是commited">哪些日志记录被认为是commited?</h4>
+
+<ol>
+<li>Leader正在replicate当前term（即term 2）的日志记录给其它Follower，一旦Leader确认了这条log entry被majority写盘了，这条log entry就被认为是committed。如图中(a)，S1作为当前term即term2的leader，log index为2的日志被majority写盘了，这条log entry被认为是commited。</li>
+<li>Leader正在replicate更早的term的log entry给其它Follower。图(b)的状态是这么来的。</li>
+</ol>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/4593875-4be0b2c6ee38dcf4.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="example2" />
+这里面隐含一个很严重的问题：一应用到状态机的日志被截断：
+1. 在阶段a，term为2，S1是Leader，且S1写入日志（term, index）为(2, 2)，并且日志被同步写入了S2。
+2. 在阶段b，S1离线，触发一次新的选主，此时S5被选为新的Leader，此时系统term为3，且写入了日志（term, index）为（3， 2）。
+3. S5尚未将日志推送到Followers变离线了，进而触发了一次新的选主，而之前离线的S1经过重新上线后被选中变成Leader，此时系统term为4，此时S1会将自己的日志同步到Followers，按照上图就是将日志（2， 2）同步到了S3，而此时由于该日志已经被同步到了多数节点（S1, S2, S3），因此，此时日志（2，2）可以被commit了（即更新到状态机）。
+4. 在阶段d，S1又很不幸地下线了，系统触发一次选主，而S5有可能被选为新的Leader（这是因为S5可以满足作为主的一切条件：1. term = 3 &gt; 2, 2. 最新的日志index为2，比大多数节点（如S2/S3/S4的日志都新），然后S5会将自己的日志更新到Followers，于是S2、S3中已经被提交的日志（2，2）被截断了。</p>
+
+<p>为了避免这种错误，对协议作出修改
+&gt;只允许主节点提交包含当前term的日志</p>
+
+<p>针对上述情况就是：即使日志（2，2）已经被大多数节点（S1、S2、S3）确认了，但是它不能被Commit，因为它是来自之前term(2)的日志，直到S1在当前term（4）产生的日志（4， 3）被大多数Follower确认，S1方可Commit（4，3）这条日志，当然，根据Raft定义，（4，3）之前的所有日志也会被Commit。此时即使S1再下线，重新选主时S5不可能成为Leader，因为它没有包含大多数节点已经拥有的日志（4，3）。</p>
+
+<h4 id="节点之前的网络状况十分不好-有多个leader怎样处理">节点之前的网络状况十分不好，有多个leader怎样处理？</h4>
+
+<p>节点之前的网络状况十分不好，此时会有多个leader，其term也是不同的。
+由于commit的修改需要多数通过，那么只有具有最多node的一个集群会commit修改成功。
+当网络状况恢复，整个集群的节点会向多数节点的集群同步。这样整个集群中的数据会继续保持一致</p>
+
+<p><strong>综述一下Log Replication</strong>
+client给leader发送数据修改请求
+leader通过Append Entries在心跳的过程中将修改内容下发到follower nodes
+在多数follower 接收了修改内容返回后，leader向client确认
+leader向follower发送心跳，具体执行修改操作，此后数据在集群中保持一致</p>
+
+<hr />
+
+<h2 id="3-log-compaction">3. Log Compaction</h2>
+
+<p>在实际的系统中，不能让日志无限增长，否则系统重启时需要花很长的时间进行回放，从而影响availability。Raft采用对整个系统进行snapshot来处理，snapshot之前的日志都可以丢弃。Snapshot技术在Chubby和ZooKeeper系统中都有采用。
+&gt;Raft用的方案是：每个副本独立的对自己的系统状态进行Snapshot，并且只能对已经提交的日志记录（已经应用到状态机）进行snapshot。</p>
+
+<p>Snapshot中包含以下内容：
+- 日志元数据，最后一条commited log entry的 (log index, last_included_term)。这两个值在Snapshot之后的第一条log entry的AppendEntriesRPC的consistency check的时候会被用上。一旦这个server做完了snapshot，就可以把这条记录的最后一条log index及其之前的所有的log entry都删掉。</p>
+
+<h2 id="系统状态机-存储系统当前状态">- 系统状态机：存储系统当前状态</h2>
+
+<h2 id="4-membership-changes-待补充">4. Membership Changes（待补充）</h2>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://arbusz.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a>
+
+                  </div>
+                
+              
+            
+            
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/09/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/" data-tooltip="配置vim用于go开发">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/09/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/" data-tooltip="两种并发模型">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://arbusz.github.io/2018/09/raft%E5%8D%8F%E8%AE%AE/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://arbusz.github.io/2018/09/raft%E5%8D%8F%E8%AE%AE/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://arbusz.github.io/2018/09/raft%E5%8D%8F%E8%AE%AE/">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2018 Arbus. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/09/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/" data-tooltip="配置vim用于go开发">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/09/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/" data-tooltip="两种并发模型">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://arbusz.github.io/2018/09/raft%E5%8D%8F%E8%AE%AE/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://arbusz.github.io/2018/09/raft%E5%8D%8F%E8%AE%AE/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://arbusz.github.io/2018/09/raft%E5%8D%8F%E8%AE%AE/">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Farbusz.github.io%2F2018%2F09%2Fraft%25E5%258D%258F%25E8%25AE%25AE%2F">
+          <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Farbusz.github.io%2F2018%2F09%2Fraft%25E5%258D%258F%25E8%25AE%25AE%2F">
+          <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https%3A%2F%2Farbusz.github.io%2F2018%2F09%2Fraft%25E5%258D%258F%25E8%25AE%25AE%2F">
+          <i class="fa fa-google-plus"></i><span>Share on Google&#43;</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="//www.gravatar.com/avatar/7c65f43625271645a726047600797446?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Arbus</h4>
+    
+      <div id="about-card-bio">A student from DLUT.</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Screw Studio
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        China
+      </div>
+    
+  </div>
+</div>
+
+    <div id="algolia-search-modal" class="modal-container">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="close-button"><i class="fa fa-close"></i></span>
+      <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+        <span class="searchby-algolia-text text-color-light text-small">by</span>
+        <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+      </a>
+      <i class="search-icon fa fa-search"></i>
+      <form id="algolia-search-form">
+        <input type="text" id="algolia-search-input" name="search"
+          class="form-control input--large search-input" placeholder="Search" />
+      </form>
+    </div>
+    <div class="modal-body">
+      <div class="no-result text-color-light text-center">no post found</div>
+      <div class="results">
+        
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/09/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/">
+                <h3 class="media-heading">配置vim用于go开发</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">因为服务器没有图形界面，所以项配置一个vim作为go语言开发工具。 服务器是centos，所以以下命令适用于centos系统：
+首先检查vim是否开启Python支持： 运行vim --version |grep python 如果打印出的Python前面是减号，说明没有加入python支持，后面配置YCM就会报错。所以让我们重新编译vim。 更新源
+sudo yum upgrade sduo yum update  升级gcc
+sudo yum install centos-release-scl -y sudo yum install devtoolset-3-toolchain -y sudo yum install gcc-c++ sudo scl enable devtoolset-3 bash  安装Python开发环境
+sudo yum upgrade sudo yum install python-devel  升级vim
+yum install ncurses-devel wget https://github.com/vim/vim/archive/master.zip unzip master.zip cd vim-master cd src/ ./configure --with-features=huge -enable-pythoninterp --with-python-config-dir=/usr/lib/python2.7/config sudo make sudo make install export PATH=/usr/local/bin:$PATH  准备工作就绪，可以下载编译YCM了 git clone https://github.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/09/raft%E5%8D%8F%E8%AE%AE/">
+                <h3 class="media-heading">Raft协议</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">分布式存储系统通常采用多个副本进行容错，提高系统的可用性。要实现此目标，就必须要解决分布式存储系统的最核心问题，维护多个副本的一致性。 &gt; 一致性是构建容错性的分布式系统的基础。在一个具有一致性的性质的集群里，同一时刻所有的节点对存储在其中的某个值都有相同的结果，即对其共享的存储保持一致性。集群具有自动恢复的性质，少数节点失效时不会影响整个集群的正常工作。
+说白了，一致性就是保证即使在部分副本宕机时，系统仍然能正常对外提供服务。一致性协议通常基于replicated state machines，即所有结点都从同一个state出发，都经过同样的一些操作序列（log），最后到达同样的state。 &gt;系统中每个节点有三个组件 &gt;- 状态机：当我们说一致性的时候，实际就是在说要保证这个状态机的一致性。状态机会从log里面取出所有的命令，然后执行一遍，得到的结果就是我们对外提供的保证了一致性的数据 &gt;- log：保存了所有修改记录 &gt;- 一致性模块：一致性模块算法就是用来保证写入的log的命令的一致性，这也是raft算法核心内容
+Raft协议将一致性协议的核心内容分拆成为几个关键阶段，以简化流程，提高协议的可理解性。
+1. Leader election（选主） Raft协议的每个副本都会处于三种状态之一：Leader、Follower、Candidate。 &gt;- Leader：所有请求的处理者，Leader副本接受client的更新请求，本地处理后再同步至多个其他副本； &gt;- Follower：请求的被动更新者，从Leader接受更新请求，然后写入本地日志文件 &gt;- Candidate：如果Follower副本在一段时间内没有收到Leader副本的心跳，则判断Leader可能已经故障，此时启动选主过程，此时副本会变成Candidate状态，直到选主结束。
+时间被分为很多连续的随机长度term，term有唯一的Id。每个id一开始就进行选主。 - 1.Follower将自己维护的current_term_id加1 - 2.将自己的状态转为Candidate - 3.发送RequestVoteRPC消息（附带current_term_id）给其他所有server
+此过程会有三种结果： - 自己被选为主。当收到majority的投票后，状态切成了Leader，并定期给其他的所有的server发心跳消息（不带log的AppendEntriesRPC）以告诉对方自己是current_term_id所标识的term的Leader。每个term最多有一个leader，term id作为logical lock，在每个RPC消息中都会带上，用于检测过期的消息。当一个server收到的RPC消息中的rpc_term_id比本地的current_term_id更大时，就更新 current_term_id为rpc_term_id，并且如果当前state为Leader或者Candidate时，将自己的状态切为Follower。如果更小，则拒绝这个消息。 - 别人成了主。当Candidate在等待投票的过程中，收到了大于或者等与本地的current_term_id声明对方是Leader的AppendEnteriesRPC时，则将自己的的state切换为Follower，并更新自己本地的current_term_id。 - 没有选出主。没有Leader被选出，每个Candidate等待投票的额过程就已超时，接着Candidates就会将本地的current_term_id再加一，发起RequestVoteRPC进行新一轮的Leader election。
+投票策略： - 每个节点只会给每个term投一票，具体的是否同意和后续的Safety有关。 - 当投票被瓜分后，所有的Candidate同时超时，然后有可能进入新一轮的票数被瓜分。为了避免这个问题，Raft采用一种很简单的方法：每个Candidate的election timeout从150ms-300ms之间随机取，那么第一个超时的Candidate就可以发起新一轮的leader election，带着最大的term_id给其它所有server发送RequestVoteRPC消息，从而自己成为leader，然后给他们发送心跳消息以告诉他们自己是主。
+ Raft有2个timeout设置 1）从follow而转换到candidate的timeout： election timeout，设置为：150ms到300ms中的随机数。一个node到达这个timeout之后会发起一个新的选举term（递增的，大的表示新的），向其他节点发起投票请求，包括投给自己的那票，如果获得了大多数选票，那么自己就转换为leader状态 2）node成为leader之后会向其他node发送Append Entries，这个时间为heartbeat timeout 如果lead在实际使用中down掉，剩下的节点会重新开启1）和2）描述的选举流程，保证了高可用性 特殊情况:
+如果集群中剩下偶数个node，并且在选举的过程中有2个node获得相等的选票数，那么会开启新的一轮term选举。直到有一个node获得多数选票（随机的election timeout保证可行） 2. Log Replication 当Leader被选出来后，就可以接受客户端发来的请求了，每个请求包含一条需要被replicated state machines执行的命令。leader会把它作为一个log entry append到日志中，然后给其它的server发AppendEntriesRPC请求。当Leader确定一个log entry被safely replicated了（大多数副本已经将该命令写入日志当中），就apply这条log entry到状态机中然后返回结果给客户端。如果某个Follower宕机了或者运行的很慢，或者网络丢包了，则会一直给这个Follower发AppendEntriesRPC直到日志一致。</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/09/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/">
+                <h3 class="media-heading">两种并发模型</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">传统的并发模型主要由两种实现的形式，一是同一个进程下，多个线程天然的共享内存，由程序对读写做同步控制(有锁或无锁). 二是多个进程通过进程间通讯或者内存映射实现数据的同步.
+Actors模型 Actors模型更多的是用消息机制来实现并发，目标是让开发者不再考虑线程这种东西，每个Actor最多同时只能进行一样工作，Actor内部可以有自己的变量和数据.
+在Actors模型中，每个Actor都有一个专属的命名”MailBox”, 其他Actor可以随时选择一个Actor通过邮箱收发数据,对于“MailBox”的维护，通常是使用发布订阅的机制实现的，比如我们可以定义发布者是自己，订阅者可以是某个Socket接口，另外的消息总线或者直接是目标Actor.
+Actors模型避免了由操作系统进行任务调度的问题，在操作系统进程之上，多个Actor可能运行在同一个进程(或线程)中.这就节省了大量的Context切换.
+CSP模型 CSP(Communicating Sequential Process)模型提供一种多个进程公用的“管道(channel)”, 这个channel中存放的是一个个”任务”. CSP中channel是第一类对象(first-class)，它不关注发送消息的实体，而关注与发送消息时使用的channel.
+原始的CSP中channel里的任务都是立即执行的,因为默认情况下的channel是无缓存的, 对channel的send动作是同步阻塞的，直到另外一个持有该channel引用的执行块取出消息(channel为空).反之，receive动作亦然。藉此，我们可以得到一个基本确定的事实，by default时，实际的receive操作只会在send之后才被发生.
+除此以外，channel还有种Buffered Channel的模式，在默认情况的基础上，你可以确定channel内的消息数量，当channel中消息数量不满足于初始化时Buffer数目时，send动作不会被阻塞，写入操作会立即完成(因此Buffered Channel在很大程度上与Actor非常接近)，直到Buffer数目已满，则send动作开始阻塞.go语言的channel就实现了有缓存和无缓存两种.
+CSP与Actors有几个重要的区别  在Actor的设计中，Actor与信箱是耦合的，而在CSP中channel是作为first-class独立存在的。 Actor中有明确的send/receive的关系，而channel中并不区分这样的关系，执行块可以任意选择发送或者取出消息。 CSP进程通常是同步的(即任务被推送进Channel就立即执行，如果任务执行的线程正忙，则发送者就暂时无法推送新任务)，Actor进程通常是异步的(消息传递给Actor后并不一定马上执行). CSP中的Channel通常是匿名的, 即任务放进Channel之后你并不需要知道是哪个Channel在执行任务，而Actor是有“身份”的，你可以明确的知道哪个Actor在执行任务. 在CSP中，我们只能通过Channel在任务间传递消息, 在Actor中我们可以直接从一个Actor往另一个Actor传输数据.  想深入了解可以阅读并发之痛 Thread，Goroutine，Actor</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
+                <h3 class="media-heading">一个遍历目录的小程序</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/">
+                <h3 class="media-heading">包含nil指针的接口和nil接口</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/">
+                <h3 class="media-heading">Go语言笔记－函数</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+                <h3 class="media-heading">Go语言笔记－表达式</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/03/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/">
+                <h3 class="media-heading">Go语言笔记－类型</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/1/01/%E5%8D%8F%E7%A8%8Bcoroutines/">
+                <h3 class="media-heading">协程Coroutines</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 0001
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+      </div>
+    </div>
+    <div class="modal-footer">
+      <p class="results-count text-medium"
+         data-message-zero="no post found"
+         data-message-one="1 post found"
+         data-message-other="{n} posts found">
+         9 posts found
+      </p>
+    </div>
+  </div>
+</div>
+    
+  
+    
+    <div id="cover" style="background-image:url('https://arbusz.github.io/images/cover.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://arbusz.github.io/js/script-qi9wbxp2ya2j6p7wx1i6tgavftewndznf4v0hy2gvivk1rxgc3lm7njqb6bz.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/arbusz.github.io\/2018\/09\/raft%E5%8D%8F%E8%AE%AE\/';
+          
+            this.page.identifier = '\/2018\/09\/raft%E5%8D%8F%E8%AE%AE\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'hugo-tranquilpeak-theme';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+    
+  </body>
+</html>
+
