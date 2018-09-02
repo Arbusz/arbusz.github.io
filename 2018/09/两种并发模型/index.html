@@ -24,7 +24,7 @@
     <meta name="generator" content="Hugo 0.40.1 with theme Tranquilpeak 0.4.3-BETA">
     <title>两种并发模型</title>
     <meta name="author" content="Arbus">
-    <meta name="keywords" content="并发">
+    <meta name="keywords" content="">
 
     <link rel="icon" href="https://arbusz.github.io/favicon.png">
     
@@ -211,11 +211,41 @@ CSP与Actors有几个重要的区别  在Actor的设计中，Actor与信箱是�
 
   <li class="sidebar-button">
     
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/09/raft%E5%8D%8F%E8%AE%AE/">
+    
+      
+      
+      <span class="sidebar-button-desc">Raft协议</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/09/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/">
+    
+      
+      
+      <span class="sidebar-button-desc">两种并发模型</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
       <a class="sidebar-button-link " href="https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/">
     
       
       
       <span class="sidebar-button-desc">包含nil指针的接口和nil接口</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/09/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/">
+    
+      
+      
+      <span class="sidebar-button-desc">配置vim用于go开发</span>
     </a>
   </li>
 
@@ -307,7 +337,8 @@ CSP与Actors有几个重要的区别  在Actor的设计中，Actor与信箱是�
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>
-传统的并发模型主要由两种实现的形式，一是同一个进程下，多个线程天然的共享内存，由程序对读写做同步控制(有锁或无锁). 二是多个进程通过进程间通讯或者内存映射实现数据的同步.</p>
+传统的并发模型主要由两种实现的形式，一是同一个进程下，多个线程天然的共享内存，由程序对读写做同步控制(有锁或无锁).
+二是多个进程通过进程间通讯或者内存映射实现数据的同步.</p>
 
 <h2 id="actors模型">Actors模型</h2>
 

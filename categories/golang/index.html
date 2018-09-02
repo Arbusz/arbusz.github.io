@@ -188,11 +188,41 @@
 
   <li class="sidebar-button">
     
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/09/raft%E5%8D%8F%E8%AE%AE/">
+    
+      
+      
+      <span class="sidebar-button-desc">Raft协议</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/09/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/">
+    
+      
+      
+      <span class="sidebar-button-desc">两种并发模型</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
       <a class="sidebar-button-link " href="https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/">
     
       
       
       <span class="sidebar-button-desc">包含nil指针的接口和nil接口</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/09/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/">
+    
+      
+      
+      <span class="sidebar-button-desc">配置vim用于go开发</span>
     </a>
   </li>
 
@@ -250,6 +280,72 @@
         
           <section class="postShorten-group main-content-wrap">
             
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://arbusz.github.io/2018/09/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/">
+          配置vim用于go开发
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-09-02T17:10:44&#43;08:00">
+        
+  
+  
+  
+  
+    2 September 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://arbusz.github.io/categories/vim">vim</a>, 
+    
+      <a class="category-link" href="https://arbusz.github.io/categories/golang">GoLang</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      因为服务器没有图形界面，所以项配置一个vim作为go语言开发工具。 服务器是centos，所以以下命令适用于centos系统：
+首先检查vim是否开启Python支持： 运行vim --version |grep python 如果打印出的Python前面是减号，说明没有加入python支持，后面配置YCM就会报错。所以让我们重新编译vim。 更新源
+sudo yum upgrade sduo yum update  升级gcc
+sudo yum install centos-release-scl -y sudo yum install devtoolset-3-toolchain -y sudo yum install gcc-c++ sudo scl enable devtoolset-3 bash  安装Python开发环境
+sudo yum upgrade sudo yum install python-devel  升级vim
+yum install ncurses-devel wget https://github.com/vim/vim/archive/master.zip unzip master.zip cd vim-master cd src/ ./configure --with-features=huge -enable-pythoninterp --with-python-config-dir=/usr/lib/python2.7/config sudo make sudo make install export PATH=/usr/local/bin:$PATH  准备工作就绪，可以下载编译YCM了 git clone https://github.
+      <p>
+        <a href="https://arbusz.github.io/2018/09/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
             
               
   
