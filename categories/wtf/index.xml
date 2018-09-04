@@ -1,151 +1,23 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Wtf on Hugo Zen theme</title>
+    <title>Wtf on Arbus&#39;s Little Site</title>
     <link>https://arbusz.github.io/categories/wtf/</link>
-    <description>Recent content in Wtf on Hugo Zen theme</description>
+    <description>Recent content in Wtf on Arbus&#39;s Little Site</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-GB</language>
+    <language>en-us</language>
     <lastBuildDate>Mon, 04 Jun 2018 21:26:20 +0800</lastBuildDate>
-    <atom:link href="https://arbusz.github.io/categories/wtf/index.xml" rel="self" type="application/rss+xml" />
+    
+	<atom:link href="https://arbusz.github.io/categories/wtf/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>包含nil指针的接口和nil接口</title>
-      <link>https://arbusz.github.io/post/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/</link>
+      <link>https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/</link>
       <pubDate>Mon, 04 Jun 2018 21:26:20 +0800</pubDate>
-      <guid>https://arbusz.github.io/post/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/</guid>
-      <description>&lt;p&gt;&lt;/p&gt;
-
-&lt;h5 id=&#34;今天看了一段代码-对运行结果十分迷惑-就研究了一番&#34;&gt;今天看了一段代码，对运行结果十分迷惑，就研究了一番。&lt;/h5&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;package main
-
-import (
-    &amp;quot;fmt&amp;quot;
-)
-type People interface {
-    Show()
-}
-
-type Student struct{}
-
-func (stu *Student) Show() {
-
-}
-
-func live() People {
-    var stu *Student
-    return stu
-}
-
-func main() m{
-
-    if live() == nil {
-        fmt.Println(&amp;quot;AAAAAAA&amp;quot;, live())
-    } else {
-        fmt.Println(&amp;quot;BBBBBBB&amp;quot;, live())
-    }
-
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;运行结果如下&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;BBBBBBB &amp;lt;nil&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;为什么会出现这样的结果，于是开始调试：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;package main
-
-import (
-	&amp;quot;fmt&amp;quot;
-)
-
-type People interface {
-	Show()
-}
-
-type Student struct{}
-
-func (stu *Student) Show() {
-
-}
-
-func live() People {
-	var stu *Student
-	return stu
-}
-
-func printDynamicType(any interface{}) {
-	fmt.Printf(&amp;quot;%T\n&amp;quot;, any)
-}
-
-func main() {
-	var a = live()
-	printDynamicType(a)
-	if live() == nil {
-		fmt.Println(&amp;quot;AAAAAAA&amp;quot;, live())
-	} else {
-		fmt.Println(&amp;quot;BBBBBBB&amp;quot;, live())
-	}
-
-	var s *Student
-	fmt.Println(s == nil)
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;结果是这样的&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;*main.Student
-BBBBBBB &amp;lt;nil&amp;gt;
-true
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;原来将*Student类型的返回值赋值给People时，接口的类型被赋值为Student类型的指针，而类型描述符被赋值为nil。而一个接口为nil的充要条件为接口的运行时类型为nil，并且接口的运行时值为nil。
-如果想运行出现之前以为的运行结果，只需把Show方法和live函数里的变量改成非指针类型即可。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;package main
-
-import (
-	&amp;quot;fmt&amp;quot;
-)
-
-type People interface {
-	Show()
-}
-
-type Student struct{}
-
-func (stu Student) Show() {
-
-}
-
-func live() People {
-	var stu Student
-	return stu
-}
-
-func printDynamicType(any interface{}) {
-	fmt.Printf(&amp;quot;%T\n&amp;quot;, any)
-}
-
-func main() {
-	var a = live()
-	printDynamicType(a)
-	if live() == nil {
-		fmt.Println(&amp;quot;AAAAAAA&amp;quot;, live())
-	} else {
-		fmt.Println(&amp;quot;BBBBBBB&amp;quot;, live())
-	}
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;结果如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;main.Student
-BBBBBBB {}
-&lt;/code&gt;&lt;/pre&gt;</description>
+      
+      <guid>https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

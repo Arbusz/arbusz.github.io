@@ -1,47 +1,23 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>代码 on Hugo Zen theme</title>
+    <title>代码 on Arbus&#39;s Little Site</title>
     <link>https://arbusz.github.io/tags/%E4%BB%A3%E7%A0%81/</link>
-    <description>Recent content in 代码 on Hugo Zen theme</description>
+    <description>Recent content in 代码 on Arbus&#39;s Little Site</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-GB</language>
+    <language>en-us</language>
     <lastBuildDate>Thu, 05 Jul 2018 08:19:34 +0800</lastBuildDate>
-    <atom:link href="https://arbusz.github.io/tags/%E4%BB%A3%E7%A0%81/index.xml" rel="self" type="application/rss+xml" />
+    
+	<atom:link href="https://arbusz.github.io/tags/%E4%BB%A3%E7%A0%81/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>一个遍历目录的小程序</title>
-      <link>https://arbusz.github.io/post/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/</link>
+      <link>https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/</link>
       <pubDate>Thu, 05 Jul 2018 08:19:34 +0800</pubDate>
-      <guid>https://arbusz.github.io/post/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/</guid>
-      <description>&lt;p&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;package main
-
-import (
-	&amp;quot;fmt&amp;quot;
-	&amp;quot;io/ioutil&amp;quot;
-)
-
-func main() {
-	folder := &amp;quot;.&amp;quot;
-	listFile(folder)
-}
-
-func listFile(folder string) {
-	files, _ := ioutil.ReadDir(folder) //specify the current dir
-	for _, file := range files {
-		if file.IsDir() {
-			listFile(folder + &amp;quot;/&amp;quot; + file.Name())
-		} else {
-			fmt.Println(folder + &amp;quot;/&amp;quot; + file.Name())
-		}
-	}
-
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;递归打印当前目录下所有文件名。&lt;/p&gt;</description>
+      
+      <guid>https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>
