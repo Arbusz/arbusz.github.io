@@ -53,13 +53,13 @@
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/categories/development/</loc>
+    <loc>https://arbusz.github.io/tags/development/</loc>
     <lastmod>2018-05-20T19:59:36+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/tags/development/</loc>
+    <loc>https://arbusz.github.io/categories/development/</loc>
     <lastmod>2018-05-20T19:59:36+08:00</lastmod>
     <priority>0</priority>
   </url>
@@ -71,14 +71,14 @@
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/categories/golang/</loc>
-    <lastmod>2018-09-02T17:10:44+08:00</lastmod>
+    <loc>https://arbusz.github.io/tags/golang/</loc>
+    <lastmod>2018-07-05T08:19:34+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/tags/golang/</loc>
-    <lastmod>2018-07-05T08:19:34+08:00</lastmod>
+    <loc>https://arbusz.github.io/categories/golang/</loc>
+    <lastmod>2018-09-02T17:10:44+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -119,13 +119,13 @@
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/categories/vim/</loc>
+    <loc>https://arbusz.github.io/tags/vim/</loc>
     <lastmod>2018-09-02T17:10:44+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/tags/vim/</loc>
+    <loc>https://arbusz.github.io/categories/vim/</loc>
     <lastmod>2018-09-02T17:10:44+08:00</lastmod>
     <priority>0</priority>
   </url>
