@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html class="nojs" lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+<title>Go语言笔记－函数 – Hugo Zen theme</title>
+<meta name="created" content="2018-05-20T19:59:36&#43;0800">
+<meta name="modified" content="2018-05-20T19:59:36&#43;0800">
+
+<meta name="description" content="&lt;p&gt;&lt;/p&gt;">
+<meta property="og:site_name" content="Hugo Zen theme">
+<meta property="og:title" content="Go语言笔记－函数">
+<meta property="og:url" content="https://arbusz.github.io/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/">
+<meta name="og:image" content="https://arbusz.github.io/xdeb-org.jpg">
+<meta name="generator" content="Hugo 0.40.1" />
+<meta name="contact" content="info@example.org">
+<link rel="canonical" href="https://arbusz.github.io/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/print.css" media="print">
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Go语言笔记－函数",
+    "datePublished": "2018-05-20T19:59:36+08:00",
+    "dateModified": "2018-05-20T19:59:36+08:00",
+    "url" : "https://arbusz.github.io/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/",
+    "description": "\u003cp\u003e\u003c/p\u003e",
+    "image" : "https://arbusz.github.io/xdeb-org.jpg",
+    "keywords": ["Development","golang"],
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://arbusz.github.io/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Hugo Zen theme",
+      "url": "https://arbusz.github.io/",
+    }
+  }
+</script>
+
+</head>
+
+<body>
+<div class="page layout__page layout__sidebar-second">
+<header class="header layout__header" role="banner">
+
+<h1 class="header__site-name">
+<a href="/" title="Home" class="header__site-link" rel="home"><span>Hugo Zen theme</span></a>
+</h1>
+<div class="region header__region">
+
+
+<form class="search-form" method="get" action="https://duckduckgo.com/">
+<input type="search" name="q" class="search-text" placeholder="Search" title="Enter the terms you wish to search for." size="20" maxlength="128">
+<input type="hidden" name="sites" value="arbusz.github.io">
+<input type="submit" value="DuckDuckGo Search" class="hidden">
+</form>
+
+</div>
+</header>
+
+
+
+
+<nav class="main-menu layout__navigation" role="navigation">
+<h2 class="visually-hidden">Main menu</h2>
+<ul class="navbar">
+<li><a class="" href="/">Home</a></li>
+<li><a class="active" href="/post/">Post</a></li>
+</ul>
+</nav>
+
+
+<main class="main layout__main" role="main">
+<h1 class="title title-submitted">Go语言笔记－函数</h1>
+<article class="section-post single-view">
+<header>
+<p class="submitted">
+<time class="modified-date" datetime="2018-05-20T19:59:36&#43;08:00">20 May, 2018</time>
+</p>
+<div class="tags">
+Tags:
+<ul>
+<li><a href="/tags/development">Development</a></li>
+<li><a href="/tags/golang">golang</a></li>
+</ul>
+</div>
+</header>
+<div class="content">
+<p></p>
+
+<h1 id="函数">函数</h1>
+
+<h2 id="定义">定义</h2>
+
+<p>关键字<code>func</code>用于定义函数。
+- 无须前置声明。
+- 不支持命名嵌套类型（nested）。
+- 不支持同名参数重载（overload）。
+- 不支持默认参数。
+- 支持不定长变参。
+- 支持多返回值。
+- 支持命名返回值。
+- 支持命名函数和闭包。
+函数属于第一类对象，具备相同签名的函数视作同一类型。
+&gt; 第一类对象指可在运行期间创建，可做函数参数或返回值，可存入变量的实体。
+函数只能判断是否为nil,不支持其他比较。
+从函数返回局部变量指针是安全的，编译器会通过逃逸分析来决定是否在堆上分配内存。</p>
+
+<p>##参数
+函数调用时，必须按照签名顺序传参，以<code>_</code>命名的参数也不能省略。
+在参数列表里，相邻的同类型参数可以合并。</p>
+
+<pre><code class="language-go">func test(x,y int,s string,_ bool) *int{
+	return nil
+}
+
+func main(){
+	test(1,2,&quot;abc&quot;)//error:not enough arguments in call to test
+}
+</code></pre>
+
+<blockquote>
+<p>形参是指函数定义中的参数，实参则是函数调用时所传递的参数。形参类似函数局部变量，而实参则是函数外部对象。</p>
+</blockquote>
+
+<p>在函数调用前，会为形参和返回值分配内存空间，并将实参拷贝给形参内存。</p>
+
+<pre><code class="language-go">func test(x *int) {
+	fmt.Printf(&quot;pointer: %p,target: %v\n&quot;, &amp;x, x) //输出形参x的地址
+}
+
+func main() {
+	a := 100
+	p := &amp;a
+	fmt.Printf(&quot;pointer: %p,target: %v\n&quot;, &amp;p, p) //输出实参p的地址
+
+	test(p)
+}
+</code></pre>
+
+<p>output</p>
+
+<pre><code>pointer: 0xc04206a018,target: 0xc04204c080
+pointer: 0xc04206a028,target: 0xc04204c080
+</code></pre>
+
+<p>从输出结果来看，尽管形参和实参都指向同一目标，但是指针传递依然被复制。所以可以认为值传递和指针传递都是一种值拷贝传递。
+如果函数参数过多，可以将其重构为一个结构体，也算变相实现可选参数和命名的功能。</p>
+
+<h3 id="变参">变参</h3>
+
+<p>变参本质上是一个切片，只能接收一到多个同类型参数，且必须放在列表尾部。</p>
+
+<pre><code class="language-go">func test(s string, a ...int) {
+	fmt.Printf(&quot;%T, %v\n&quot;, a, a)
+}
+
+func main() {
+	test(&quot;abc&quot;, 1, 2, 3, 4)
+}
+</code></pre>
+
+<p>output</p>
+
+<pre><code>[]int, [1 2 3 4]
+</code></pre>
+
+<p>切片作为变参时，必须进行展开操作。如果是数组，先将其转换为切片。</p>
+
+<pre><code class="language-go">func test(a ...int) {
+	fmt.Println(a)
+}
+
+func main() {
+	a := [3]int{10, 20, 30}//a是数组
+	test(a[:]...)//将数组转换为slice后展开
+}
+</code></pre>
+
+<pre><code class="language-go">func test(a ...int) {
+	fmt.Println(a)
+}
+
+func main() {
+	a := []int{10, 20, 30}//a是切片
+	test(a...)
+}
+</code></pre>
+
+<p>因为变参是切片，所以参数复制的只是切片自身，并不包括底层数组。</p>
+
+<h2 id="返回值">返回值</h2>
+
+<p>有返回值的额函数，必须有明确的<code>return</code>语句，除非有<code>panic</code>或者是无<code>break</code>的死循环。
+错误写法：</p>
+
+<pre><code class="language-go">func test(x int) int {
+	if x&gt;0{
+		return 1
+	} else if x&lt;0{
+		return -1
+	}
+	//error:missing return at the end of function
+}
+</code></pre>
+
+<p>正确写法：</p>
+
+<pre><code class="language-go">func test(x int) int {
+	var a int
+	if x &gt; 0 {
+		a = 1
+	} else if x &lt; 0 {
+		a = -1
+	}
+	return a
+}
+</code></pre>
+
+<p>函数支持多返回值，例如常见的<code>error</code>模式：</p>
+
+<pre><code class="language-go">func div(x, y int) (int, error){
+	if y==0{
+		return 0,errors.New(&quot;division by zero&quot;)
+	}	else {
+		return x/y,nil
+	}
+}
+</code></pre>
+
+<h3 id="命名返回值">命名返回值</h3>
+
+<p>命名返回值和命名参数一样，也可以作为局部变量来使用，最后由<code>return</code>隐式返回。</p>
+
+<pre><code class="language-go">func div(x, y int) (z int, err error) {
+	if y == 0 {
+		err = errors.New(&quot;division by zero&quot;)
+	} else {
+		z = x / y
+		err = nil
+	}
+	return
+}
+</code></pre>
+
+<p>参数返回时，需要对所有命名值全部返回。
+##匿名函数
+匿名函数是没有定义名字符号的函数。
+匿名函数可以直接调用，保存到变量，作为参数或返回值。
+直接使用：</p>
+
+<pre><code class="language-go">func main(){
+	func (s string) {
+		println(s)
+	} (&quot;hello world&quot;)
+}
+</code></pre>
+
+<p>赋值给变量：</p>
+
+<pre><code class="language-go">func main(){
+	add := func (x, y int) int {
+		return x+y
+	}
+	println(add(1,2))
+}
+</code></pre>
+
+<p>作为参数：</p>
+
+<pre><code class="language-go">func test(f func()){
+	f()
+}
+
+func main(){
+	test(func() {
+		println(&quot;hello world&quot;)
+	})
+}
+</code></pre>
+
+<p>作为返回值：</p>
+
+<pre><code class="language-go">func test() func(int,int) int {
+	return func (x,y int) int {
+		return x+y
+	}
+}
+
+func main() {
+	add := test()
+	println(add(1,2))
+}
+</code></pre>
+
+<p>普通函数和匿名函数都可作为结构体字段，或经通道传递。</p>
+
+<h3 id="闭包">闭包</h3>
+
+<p>闭包是函数和引用环境的组合体。
+闭包直接引用原环境变量。
+闭包延迟求值的特性：</p>
+
+<pre><code class="language-go">func test() []func() {
+	var s []func()
+
+	for i:=0;i&lt;2;i++{
+		s = append(s, func() {
+			println(&amp;i,i)
+		})
+	}
+	return s
+}
+
+func main(){
+	for _,f := range test() {
+		f()
+	}
+}
+</code></pre>
+
+<p>output:</p>
+
+<pre><code>0xc042040000 2
+0xc042040000 2
+</code></pre>
+
+<p>因为<code>for</code>循环复用局部变量<code>i</code>，每次添加匿名函数时引用的是同一变量。添加操作仅仅是将匿名函数放入列表，并未执行。所以执行的时候读取的是环境变量<code>i</code>最后一次循环时的值。
+解决方法是每次使用不同的环境变量或者传参复制，让各自闭包环境不同。</p>
+
+<pre><code class="language-go">func test() []func() {
+	var s []func()
+
+	for i := 0; i &lt; 2; i++ {
+		x := i
+		s = append(s, func() {
+			println(&amp;x, x)
+		})
+	}
+	return s
+}
+
+func main() {
+	for _, f := range test() {
+		f()
+	}
+}
+</code></pre>
+
+<p>output:</p>
+
+<pre><code>0xc042008038 0
+0xc042008040 1
+</code></pre>
+
+<h2 id="延迟调用">延迟调用</h2>
+
+<p><code>defer</code>向当前函数注册，等当前函数结束前才被执行。延迟调用常用于资源释放，解除锁定，以及错误处理等操作。
+多个<code>defer</code>按照FILO。
+<code>return</code>和<code>panic</code>都会终止当前函数，引发<code>defer</code>。<code>return</code>执行前会先更新返回值。</p>
+
+<pre><code class="language-go">func test() (z int) {
+	defer func() {
+		println(&quot;defer:&quot;,z)
+		z+=100//修改命名返回值
+	}()
+	return 100//实际执行次序 z=100,call defer return z
+}
+
+func main(){
+	println(&quot;test:&quot;,test())
+}
+</code></pre>
+
+<h3 id="性能">性能</h3>
+
+<p>延迟调用花费代价很大，此过程包括注册、调用等操作，还有额外的缓存开销。所以性能要求高压力大的算法，应避免使用延迟调用。</p>
+
+<h2 id="错误处理">错误处理</h2>
+
+<h3 id="error">error</h3>
+
+<p>官方推荐做法是返回<code>error</code>状态。
+标准库将<code>error</code>定义为接口类型，以便实现自定义错误类型。</p>
+
+<pre><code class="language-go">type error interface {
+	Error() string
+}
+</code></pre>
+
+<p>错误变量通常以<code>err</code>作为前缀，且字符串内容全部小写，没有结束标点，以便嵌入到其他格式化字符串中输出。</p>
+
+<pre><code class="language-go">var errDivByZero = errors.New(&quot;division by zero&quot;)
+
+func div(x, y int) (int, error) {
+	if y == 0 {
+		return 0, errDivByZero
+	}
+	return x / y, nil
+}
+func main() {
+	z, err := div(5, 0)
+	if err == errDivByZero {
+		log.Fatalln(err)
+	}
+	println(z)
+}
+</code></pre>
+
+<p>某些时候需要自定义错误类型。</p>
+
+<pre><code class="language-go">type DivErr struct {
+	x, y int
+}
+
+func (DivErr) Error() string {
+	return &quot;division by zero&quot;
+}
+
+func div(x, y int) (int, error) {
+	if y == 0 {
+		return 0, DivErr{x, y}
+	}
+	return x / y, nil
+}
+
+func main() {
+	z, err := div(5, 0)
+	if err != nil {
+		switch e := err.(type) {
+		case DivErr:
+			fmt.Println(e, e.x, e.y)
+		default:
+			fmt.Println(e)
+		}
+		log.Fatalln(err)
+	}
+	println(z)
+}
+</code></pre>
+
+<h3 id="panic-recover">panic,recover</h3>
+
+<pre><code class="language-go">func panic(v interface{})
+func recover() interface{}
+</code></pre>
+
+<p><code>panic/recover</code>在使用上更接近<code>try/catch</code>结构化异常。他们是内置函数而非语句。<code>panic</code>会立即中断当前 函数流程，执行延迟调用。而在延迟调用中，<code>recover</code>可捕获并返回<code>panic</code>提交的错误对象。</p>
+
+<pre><code class="language-go">func main() {
+	defer func() {
+		if err := recover(); err != nil {//捕获错误
+			log.Fatalln(err)
+		}
+	}()
+	panic(&quot;i am dead&quot;)//引发错误
+	panic(&quot;exit&quot;)//不会执行
+}
+</code></pre>
+
+<p>无论是否执行<code>recover</code>，所有延迟调用都会被执行。但是中断性错误会沿调用堆栈向外传递，要么被外层捕获，要么导致进程崩溃。</p>
+
+<pre><code class="language-go">func test() {
+	defer println(&quot;test.1&quot;)
+	defer println(&quot;test.2&quot;)
+	panic(&quot;i am dead&quot;)
+}
+func main() {
+	defer func() {
+		log.Println(recover())
+	}()
+	test()
+}
+</code></pre>
+
+<p>output</p>
+
+<pre><code>test.2
+test.1
+i am dead
+</code></pre>
+
+<p>连续调用<code>panic</code>，仅最后一个会被<code>recover</code>捕获。</p>
+
+<pre><code class="language-go">func main() {
+	defer func() {
+		for {
+			if err := recover(); err != nil {
+				log.Println(err)
+			} else {
+				log.Fatalln(&quot;fatal&quot;)
+			}
+		}
+	}()
+	defer func() {
+		panic(&quot;you are dead&quot;) // 类似重新抛出异常（ rethrow）
+	}() // 可先 recover捕获，包装后重新抛出
+	panic(&quot;i am dead&quot;)
+}
+</code></pre>
+
+<p>output</p>
+
+<pre><code>you are dead
+fatal
+</code></pre>
+
+<p><code>recover</code>必须在延迟调用函数中才执行能正常工作。</p>
+
+<pre><code class="language-go">func catch() {
+	log.Println(&quot;catch &quot;,recover())
+}
+
+func main(){
+	defer log.Println(recover())
+	defer catch()
+	panic(&quot;i am &quot;)
+}
+</code></pre>
+
+<p>output</p>
+
+<pre><code>catch i am
+nil
+</code></pre>
+
+<pre><code class="language-go">func catch() {
+	log.Println(&quot;catch &quot;, recover())
+}
+
+func main() {
+	defer catch()
+	defer log.Println(recover())
+	panic(&quot;i am &quot;)
+}
+</code></pre>
+
+<p>output</p>
+
+<pre><code>nil
+catch i am
+</code></pre>
+
+</div>
+</article>
+</main>
+
+
+
+<aside class="sidebar layout__second-sidebar" role="complementary">
+<section>
+<h4 class="menu"><a class="" href="/post/">Post</a></h4>
+<ul class="menu">
+<li><a class="" href="/post/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/">配置vim用于go开发</a></li>
+<li><a class="" href="/post/raft%E5%8D%8F%E8%AE%AE/">Raft协议</a></li>
+<li><a class="" href="/post/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/">两种并发模型</a></li>
+<li><a class="" href="/post/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">一个遍历目录的小程序</a></li>
+<li><a class="" href="/post/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/">包含nil指针的接口和nil接口</a></li>
+<li><a class="active" href="/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/">Go语言笔记－函数</a></li>
+<li><a class="" href="/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">Go语言笔记－表达式</a></li>
+<li><a class="" href="/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/">Go语言笔记－类型</a></li>
+<li><a class="" href="/post/%E5%8D%8F%E7%A8%8Bcoroutines/">协程Coroutines</a></li>
+</ul>
+</section>
+</aside>
+
+
+<footer class="footer layout__footer" role="contentinfo">
+<p><!--Creative Commons License-->This site is licensed under a <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.<!--/Creative Commons License--></p>
+<p>Powered by <a href="https://gohugo.io/">Hugo</a> and the <a href="https://github.com/frjo/hugo-theme-zen">Zen theme</a>.</p>
+
+</footer>
+
+</div>
+<div class="mobile-nav-wrapper hidden">
+  <div class="mobile-nav-cover"></div>
+  <a href="#navigation" class="mobile-nav-toggle" aria-haspopup="true" role="button">Menu</a>
+  <div class="mobile-nav-sheet"></div>
+</div>
+<script src="/js/jquery.slim.min.js"></script>
+<script src="/js/script.js"></script>
+</body>
+</html>

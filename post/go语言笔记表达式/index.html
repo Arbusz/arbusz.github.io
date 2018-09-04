@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html class="nojs" lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+<title>Go语言笔记－表达式 – Hugo Zen theme</title>
+<meta name="created" content="2018-05-20T19:45:45&#43;0800">
+<meta name="modified" content="2018-05-20T19:45:45&#43;0800">
+
+<meta name="description" content="&lt;p&gt;&lt;/p&gt;">
+<meta property="og:site_name" content="Hugo Zen theme">
+<meta property="og:title" content="Go语言笔记－表达式">
+<meta property="og:url" content="https://arbusz.github.io/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+<meta name="og:image" content="https://arbusz.github.io/xdeb-org.jpg">
+<meta name="generator" content="Hugo 0.40.1" />
+<meta name="contact" content="info@example.org">
+<link rel="canonical" href="https://arbusz.github.io/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/print.css" media="print">
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Go语言笔记－表达式",
+    "datePublished": "2018-05-20T19:45:45+08:00",
+    "dateModified": "2018-05-20T19:45:45+08:00",
+    "url" : "https://arbusz.github.io/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/",
+    "description": "\u003cp\u003e\u003c/p\u003e",
+    "image" : "https://arbusz.github.io/xdeb-org.jpg",
+    "keywords": ["Development","golang"],
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://arbusz.github.io/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Hugo Zen theme",
+      "url": "https://arbusz.github.io/",
+    }
+  }
+</script>
+
+</head>
+
+<body>
+<div class="page layout__page layout__sidebar-second">
+<header class="header layout__header" role="banner">
+
+<h1 class="header__site-name">
+<a href="/" title="Home" class="header__site-link" rel="home"><span>Hugo Zen theme</span></a>
+</h1>
+<div class="region header__region">
+
+
+<form class="search-form" method="get" action="https://duckduckgo.com/">
+<input type="search" name="q" class="search-text" placeholder="Search" title="Enter the terms you wish to search for." size="20" maxlength="128">
+<input type="hidden" name="sites" value="arbusz.github.io">
+<input type="submit" value="DuckDuckGo Search" class="hidden">
+</form>
+
+</div>
+</header>
+
+
+
+
+<nav class="main-menu layout__navigation" role="navigation">
+<h2 class="visually-hidden">Main menu</h2>
+<ul class="navbar">
+<li><a class="" href="/">Home</a></li>
+<li><a class="active" href="/post/">Post</a></li>
+</ul>
+</nav>
+
+
+<main class="main layout__main" role="main">
+<h1 class="title title-submitted">Go语言笔记－表达式</h1>
+<article class="section-post single-view">
+<header>
+<p class="submitted">
+<time class="modified-date" datetime="2018-05-20T19:45:45&#43;08:00">20 May, 2018</time>
+</p>
+<div class="tags">
+Tags:
+<ul>
+<li><a href="/tags/development">Development</a></li>
+<li><a href="/tags/golang">golang</a></li>
+</ul>
+</div>
+</header>
+<div class="content">
+<p></p>
+
+<h1 id="表达式">表达式</h1>
+
+<h2 id="指针">指针</h2>
+
+<p>指针运算符为左值时，可以更新目标状态</p>
+
+<pre><code class="language-go">package main
+
+func main(){
+	x:=10
+
+	var p *int = &amp;x
+	println(&amp;x,x)
+	println(p,*p)
+	*p += 20
+	println(p,*p)
+	println(&amp;x,x)
+}
+
+</code></pre>
+
+<p>output</p>
+
+<pre><code class="language-go">0xc04202ff60 10
+0xc04202ff60 10
+0xc04202ff60 30
+0xc04202ff60 30
+</code></pre>
+
+<p>并非所有对象都能进行取地址操作
+指针类型不能做加减运算和类型转换</p>
+
+<h2 id="复合类型变量的初始化">复合类型变量的初始化</h2>
+
+<p>一些语法限制
+- 初始化表达式必须含类型标签
+- 左花括号必须在类型尾部，不能另起一行
+- 多个成员的初始值以逗号分开
+- 允许多行，但每行必须以逗号或者右花括号结束</p>
+
+<h2 id="流控制">流控制</h2>
+
+<h5 id="if-else">if&hellip;else&hellip;</h5>
+
+<p>条件表达式必须是布尔类型 ，可以省略括号
+可以在条件表达式前加初始化语句，可定义块局部变量（作用域是该<code>if</code>语句或执行 初始化函数。</p>
+
+<h3 id="switch">switch</h3>
+
+<p>某条<code>case</code>语句里有多个条件时，只要有一个命中即可匹配
+如果有<code>default</code>,在全部<code>case</code>执行失败后才会执行<code>default</code>语句。
+不能重复出现常量<code>case</code>条件。
+相邻的空<code>case</code>不构成多条件匹配，<code>case</code>内容为空默认包含一个<code>break</code>语句。</p>
+
+<pre><code class="language-go"> switch x {
+ case a:
+ case b:
+	 println(&quot;b&quot;)
+ }
+</code></pre>
+
+<h4 id="fallthrough">fallthrough</h4>
+
+<p>如需贯通后续的<code>case</code>,需执行<code>fallthrough。</code>
+当有<code>fallthrough</code>时，不必匹配后续条件表达式。</p>
+
+<pre><code>func main() {
+	switch x:=5;x{
+	default:
+		println(x)
+	case 5:
+		x+=10
+		println(x)
+		fallthrough
+	case 10:
+		println(x)
+	}
+}
+</code></pre>
+
+<p>output</p>
+
+<pre><code>15
+15
+</code></pre>
+
+<p><code>fallthrough</code>必须放在<code>case</code>结尾处，可以使用<code>break</code>阻止执行。</p>
+
+<h3 id="for">for</h3>
+
+<p><code>go</code>语言只有一种循环，但是常见方法都能支持。
+常见写法</p>
+
+<pre><code class="language-go">for i=0;i&lt;3;i++{ //初始化表达式支持函数调用或者定义局变量
+}
+
+for x&lt;10{ //类似“while x&lt;10{}”
+}
+
+for { //类似“while true{}”
+	break
+}
+</code></pre>
+
+<p>可用<code>for...rang</code>完成数据迭代，支持字符串、数组、数组指针、切片、字典、通道类型，返回索引、键值数据。</p>
+
+<pre><code class="language-go">func main() {
+	data := [3]string{&quot;a&quot;,&quot;b&quot;,&quot;c&quot;}
+	for i,s := range data{
+		println(i,s)
+	}
+
+}
+</code></pre>
+
+<p>允许单返回值，或者使用<code>_</code>忽略。</p>
+
+<pre><code class="language-go"> func main() {
+	data := [3]string{&quot;a&quot;,&quot;b&quot;,&quot;c&quot;}
+	for i := range data{
+		println(i)
+	}
+
+}
+</code></pre>
+
+<pre><code class="language-go">func main() {
+	data := [3]string{&quot;a&quot;,&quot;b&quot;,&quot;c&quot;}
+	for _,s := range data{
+		println(s)
+	}
+
+}
+</code></pre>
+
+<p>但是<code>range</code>也有个大坑，就是定义的局部变量会重复使用，即一个地址多次写值。
+详见本博客博文《go语言坑之for range》。
+如果<code>range</code>的目标表达式是函数优化，也仅被执行一次。</p>
+
+<pre><code class="language-go">func main() {
+	for i,s := range data(){
+		println(i,s)
+	}
+
+}
+func data() []int {
+	println(&quot;origin data.&quot;)
+	return []int{10,20,30}
+}
+</code></pre>
+
+<p>output</p>
+
+<pre><code>origin data.
+0 10
+1 20
+2 30
+</code></pre>
+
+<p><code>goto</code> <code>continue</code> <code>break</code>略过。</p>
+
+</div>
+</article>
+</main>
+
+
+
+<aside class="sidebar layout__second-sidebar" role="complementary">
+<section>
+<h4 class="menu"><a class="" href="/post/">Post</a></h4>
+<ul class="menu">
+<li><a class="" href="/post/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/">配置vim用于go开发</a></li>
+<li><a class="" href="/post/raft%E5%8D%8F%E8%AE%AE/">Raft协议</a></li>
+<li><a class="" href="/post/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/">两种并发模型</a></li>
+<li><a class="" href="/post/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">一个遍历目录的小程序</a></li>
+<li><a class="" href="/post/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/">包含nil指针的接口和nil接口</a></li>
+<li><a class="" href="/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/">Go语言笔记－函数</a></li>
+<li><a class="active" href="/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">Go语言笔记－表达式</a></li>
+<li><a class="" href="/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/">Go语言笔记－类型</a></li>
+<li><a class="" href="/post/%E5%8D%8F%E7%A8%8Bcoroutines/">协程Coroutines</a></li>
+</ul>
+</section>
+</aside>
+
+
+<footer class="footer layout__footer" role="contentinfo">
+<p><!--Creative Commons License-->This site is licensed under a <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.<!--/Creative Commons License--></p>
+<p>Powered by <a href="https://gohugo.io/">Hugo</a> and the <a href="https://github.com/frjo/hugo-theme-zen">Zen theme</a>.</p>
+
+</footer>
+
+</div>
+<div class="mobile-nav-wrapper hidden">
+  <div class="mobile-nav-cover"></div>
+  <a href="#navigation" class="mobile-nav-toggle" aria-haspopup="true" role="button">Menu</a>
+  <div class="mobile-nav-sheet"></div>
+</div>
+<script src="/js/jquery.slim.min.js"></script>
+<script src="/js/script.js"></script>
+</body>
+</html>

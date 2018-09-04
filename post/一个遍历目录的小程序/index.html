@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html class="nojs" lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+<title>一个遍历目录的小程序 – Hugo Zen theme</title>
+<meta name="created" content="2018-07-05T08:19:34&#43;0800">
+<meta name="modified" content="2018-07-05T08:19:34&#43;0800">
+
+<meta name="description" content="&lt;p&gt;&lt;/p&gt;">
+<meta property="og:site_name" content="Hugo Zen theme">
+<meta property="og:title" content="一个遍历目录的小程序">
+<meta property="og:url" content="https://arbusz.github.io/post/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
+<meta name="og:image" content="https://arbusz.github.io/xdeb-org.jpg">
+<meta name="generator" content="Hugo 0.40.1" />
+<meta name="contact" content="info@example.org">
+<link rel="canonical" href="https://arbusz.github.io/post/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/print.css" media="print">
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "一个遍历目录的小程序",
+    "datePublished": "2018-07-05T08:19:34+08:00",
+    "dateModified": "2018-07-05T08:19:34+08:00",
+    "url" : "https://arbusz.github.io/post/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/",
+    "description": "\u003cp\u003e\u003c/p\u003e",
+    "image" : "https://arbusz.github.io/xdeb-org.jpg",
+    "keywords": ["golang","代码"],
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://arbusz.github.io/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Hugo Zen theme",
+      "url": "https://arbusz.github.io/",
+    }
+  }
+</script>
+
+</head>
+
+<body>
+<div class="page layout__page layout__sidebar-second">
+<header class="header layout__header" role="banner">
+
+<h1 class="header__site-name">
+<a href="/" title="Home" class="header__site-link" rel="home"><span>Hugo Zen theme</span></a>
+</h1>
+<div class="region header__region">
+
+
+<form class="search-form" method="get" action="https://duckduckgo.com/">
+<input type="search" name="q" class="search-text" placeholder="Search" title="Enter the terms you wish to search for." size="20" maxlength="128">
+<input type="hidden" name="sites" value="arbusz.github.io">
+<input type="submit" value="DuckDuckGo Search" class="hidden">
+</form>
+
+</div>
+</header>
+
+
+
+
+<nav class="main-menu layout__navigation" role="navigation">
+<h2 class="visually-hidden">Main menu</h2>
+<ul class="navbar">
+<li><a class="" href="/">Home</a></li>
+<li><a class="active" href="/post/">Post</a></li>
+</ul>
+</nav>
+
+
+<main class="main layout__main" role="main">
+<h1 class="title title-submitted">一个遍历目录的小程序</h1>
+<article class="section-post single-view">
+<header>
+<p class="submitted">
+<time class="modified-date" datetime="2018-07-05T08:19:34&#43;08:00">5 July, 2018</time>
+</p>
+<div class="tags">
+Tags:
+<ul>
+<li><a href="/tags/golang">golang</a></li>
+<li><a href="/tags/%E4%BB%A3%E7%A0%81">代码</a></li>
+</ul>
+</div>
+</header>
+<div class="content">
+<p></p>
+
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+	&quot;io/ioutil&quot;
+)
+
+func main() {
+	folder := &quot;.&quot;
+	listFile(folder)
+}
+
+func listFile(folder string) {
+	files, _ := ioutil.ReadDir(folder) //specify the current dir
+	for _, file := range files {
+		if file.IsDir() {
+			listFile(folder + &quot;/&quot; + file.Name())
+		} else {
+			fmt.Println(folder + &quot;/&quot; + file.Name())
+		}
+	}
+
+}
+</code></pre>
+
+<p>递归打印当前目录下所有文件名。</p>
+
+</div>
+</article>
+</main>
+
+
+
+<aside class="sidebar layout__second-sidebar" role="complementary">
+<section>
+<h4 class="menu"><a class="" href="/post/">Post</a></h4>
+<ul class="menu">
+<li><a class="" href="/post/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/">配置vim用于go开发</a></li>
+<li><a class="" href="/post/raft%E5%8D%8F%E8%AE%AE/">Raft协议</a></li>
+<li><a class="" href="/post/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/">两种并发模型</a></li>
+<li><a class="active" href="/post/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">一个遍历目录的小程序</a></li>
+<li><a class="" href="/post/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/">包含nil指针的接口和nil接口</a></li>
+<li><a class="" href="/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/">Go语言笔记－函数</a></li>
+<li><a class="" href="/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">Go语言笔记－表达式</a></li>
+<li><a class="" href="/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/">Go语言笔记－类型</a></li>
+<li><a class="" href="/post/%E5%8D%8F%E7%A8%8Bcoroutines/">协程Coroutines</a></li>
+</ul>
+</section>
+</aside>
+
+
+<footer class="footer layout__footer" role="contentinfo">
+<p><!--Creative Commons License-->This site is licensed under a <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.<!--/Creative Commons License--></p>
+<p>Powered by <a href="https://gohugo.io/">Hugo</a> and the <a href="https://github.com/frjo/hugo-theme-zen">Zen theme</a>.</p>
+
+</footer>
+
+</div>
+<div class="mobile-nav-wrapper hidden">
+  <div class="mobile-nav-cover"></div>
+  <a href="#navigation" class="mobile-nav-toggle" aria-haspopup="true" role="button">Menu</a>
+  <div class="mobile-nav-sheet"></div>
+</div>
+<script src="/js/jquery.slim.min.js"></script>
+<script src="/js/script.js"></script>
+</body>
+</html>

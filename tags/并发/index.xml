@@ -1,30 +1,51 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>并发 on Arbus&#39;s Little Site</title>
+    <title>并发 on Hugo Zen theme</title>
     <link>https://arbusz.github.io/tags/%E5%B9%B6%E5%8F%91/</link>
-    <description>Recent content in 并发 on Arbus&#39;s Little Site</description>
+    <description>Recent content in 并发 on Hugo Zen theme</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>en-GB</language>
     <lastBuildDate>Sun, 02 Sep 2018 17:02:35 +0800</lastBuildDate>
-    
-	<atom:link href="https://arbusz.github.io/tags/%E5%B9%B6%E5%8F%91/index.xml" rel="self" type="application/rss+xml" />
-    
+    <atom:link href="https://arbusz.github.io/tags/%E5%B9%B6%E5%8F%91/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>两种并发模型</title>
-      <link>https://arbusz.github.io/2018/09/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/</link>
+      <link>https://arbusz.github.io/post/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/</link>
       <pubDate>Sun, 02 Sep 2018 17:02:35 +0800</pubDate>
-      
-      <guid>https://arbusz.github.io/2018/09/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/</guid>
-      <description>传统的并发模型主要由两种实现的形式，一是同一个进程下，多个线程天然的共享内存，由程序对读写做同步控制(有锁或无锁). 二是多个进程通过进程间通讯或者内存映射实现数据的同步.
-Actors模型 Actors模型更多的是用消息机制来实现并发，目标是让开发者不再考虑线程这种东西，每个Actor最多同时只能进行一样工作，Actor内部可以有自己的变量和数据.
-在Actors模型中，每个Actor都有一个专属的命名”MailBox”, 其他Actor可以随时选择一个Actor通过邮箱收发数据,对于“MailBox”的维护，通常是使用发布订阅的机制实现的，比如我们可以定义发布者是自己，订阅者可以是某个Socket接口，另外的消息总线或者直接是目标Actor.
-Actors模型避免了由操作系统进行任务调度的问题，在操作系统进程之上，多个Actor可能运行在同一个进程(或线程)中.这就节省了大量的Context切换.
-CSP模型 CSP(Communicating Sequential Process)模型提供一种多个进程公用的“管道(channel)”, 这个channel中存放的是一个个”任务”. CSP中channel是第一类对象(first-class)，它不关注发送消息的实体，而关注与发送消息时使用的channel.
-原始的CSP中channel里的任务都是立即执行的,因为默认情况下的channel是无缓存的, 对channel的send动作是同步阻塞的，直到另外一个持有该channel引用的执行块取出消息(channel为空).反之，receive动作亦然。藉此，我们可以得到一个基本确定的事实，by default时，实际的receive操作只会在send之后才被发生.
-除此以外，channel还有种Buffered Channel的模式，在默认情况的基础上，你可以确定channel内的消息数量，当channel中消息数量不满足于初始化时Buffer数目时，send动作不会被阻塞，写入操作会立即完成(因此Buffered Channel在很大程度上与Actor非常接近)，直到Buffer数目已满，则send动作开始阻塞.go语言的channel就实现了有缓存和无缓存两种.
-CSP与Actors有几个重要的区别  在Actor的设计中，Actor与信箱是耦合的，而在CSP中channel是作为first-class独立存在的。 Actor中有明确的send/receive的关系，而channel中并不区分这样的关系，执行块可以任意选择发送或者取出消息。 CSP进程通常是同步的(即任务被推送进Channel就立即执行，如果任务执行的线程正忙，则发送者就暂时无法推送新任务)，Actor进程通常是异步的(消息传递给Actor后并不一定马上执行). CSP中的Channel通常是匿名的, 即任务放进Channel之后你并不需要知道是哪个Channel在执行任务，而Actor是有“身份”的，你可以明确的知道哪个Actor在执行任务. 在CSP中，我们只能通过Channel在任务间传递消息, 在Actor中我们可以直接从一个Actor往另一个Actor传输数据.  想深入了解可以阅读并发之痛 Thread，Goroutine，Actor</description>
+      <guid>https://arbusz.github.io/post/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/</guid>
+      <description>&lt;p&gt;
+传统的并发模型主要由两种实现的形式，一是同一个进程下，多个线程天然的共享内存，由程序对读写做同步控制(有锁或无锁).
+二是多个进程通过进程间通讯或者内存映射实现数据的同步.&lt;/p&gt;
+
+&lt;h2 id=&#34;actors模型&#34;&gt;Actors模型&lt;/h2&gt;
+
+&lt;p&gt;Actors模型更多的是用消息机制来实现并发，目标是让开发者不再考虑线程这种东西，每个Actor最多同时只能进行一样工作，Actor内部可以有自己的变量和数据.&lt;/p&gt;
+
+&lt;p&gt;在Actors模型中，每个Actor都有一个专属的命名”MailBox”, 其他Actor可以随时选择一个Actor通过邮箱收发数据,对于“MailBox”的维护，通常是使用发布订阅的机制实现的，比如我们可以定义发布者是自己，订阅者可以是某个Socket接口，另外的消息总线或者直接是目标Actor.&lt;/p&gt;
+
+&lt;p&gt;Actors模型避免了由操作系统进行任务调度的问题，在操作系统进程之上，多个Actor可能运行在同一个进程(或线程)中.这就节省了大量的Context切换.&lt;/p&gt;
+
+&lt;h2 id=&#34;csp模型&#34;&gt;CSP模型&lt;/h2&gt;
+
+&lt;p&gt;CSP(Communicating Sequential Process)模型提供一种多个进程公用的“管道(channel)”, 这个channel中存放的是一个个”任务”. CSP中channel是第一类对象(first-class)，它不关注发送消息的实体，而关注与发送消息时使用的channel.&lt;/p&gt;
+
+&lt;p&gt;原始的CSP中channel里的任务都是立即执行的,因为默认情况下的channel是无缓存的, 对channel的send动作是同步阻塞的，直到另外一个持有该channel引用的执行块取出消息(channel为空).反之，receive动作亦然。藉此，我们可以得到一个基本确定的事实，by default时，实际的receive操作只会在send之后才被发生.&lt;/p&gt;
+
+&lt;p&gt;除此以外，channel还有种Buffered Channel的模式，在默认情况的基础上，你可以确定channel内的消息数量，当channel中消息数量不满足于初始化时Buffer数目时，send动作不会被阻塞，写入操作会立即完成(因此Buffered Channel在很大程度上与Actor非常接近)，直到Buffer数目已满，则send动作开始阻塞.go语言的channel就实现了有缓存和无缓存两种.&lt;/p&gt;
+
+&lt;h2 id=&#34;csp与actors有几个重要的区别&#34;&gt;CSP与Actors有几个重要的区别&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;在Actor的设计中，Actor与信箱是耦合的，而在CSP中channel是作为first-class独立存在的。&lt;/li&gt;
+&lt;li&gt;Actor中有明确的send/receive的关系，而channel中并不区分这样的关系，执行块可以任意选择发送或者取出消息。&lt;/li&gt;
+&lt;li&gt;CSP进程通常是同步的(即任务被推送进Channel就立即执行，如果任务执行的线程正忙，则发送者就暂时无法推送新任务)，Actor进程通常是异步的(消息传递给Actor后并不一定马上执行).&lt;/li&gt;
+&lt;li&gt;CSP中的Channel通常是匿名的, 即任务放进Channel之后你并不需要知道是哪个Channel在执行任务，而Actor是有“身份”的，你可以明确的知道哪个Actor在执行任务.&lt;/li&gt;
+&lt;li&gt;在CSP中，我们只能通过Channel在任务间传递消息, 在Actor中我们可以直接从一个Actor往另一个Actor传输数据.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;想深入了解可以阅读&lt;a href=&#34;http://jolestar.com/parallel-programming-model-thread-goroutine-actor/&#34;&gt;并发之痛 Thread，Goroutine，Actor
+&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

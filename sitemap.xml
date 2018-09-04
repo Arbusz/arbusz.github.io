@@ -3,54 +3,43 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://arbusz.github.io/2018/09/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/</loc>
+    <loc>https://arbusz.github.io/post/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/</loc>
     <lastmod>2018-09-02T17:10:44+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/2018/09/raft%E5%8D%8F%E8%AE%AE/</loc>
+    <loc>https://arbusz.github.io/post/raft%E5%8D%8F%E8%AE%AE/</loc>
     <lastmod>2018-09-02T17:08:32+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/2018/09/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/</loc>
+    <loc>https://arbusz.github.io/post/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/</loc>
     <lastmod>2018-09-02T17:02:35+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/</loc>
+    <loc>https://arbusz.github.io/post/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/</loc>
     <lastmod>2018-07-05T08:19:34+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/</loc>
+    <loc>https://arbusz.github.io/post/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/</loc>
     <lastmod>2018-06-04T21:26:20+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/</loc>
+    <loc>https://arbusz.github.io/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/</loc>
     <lastmod>2018-05-20T19:59:36+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/</loc>
+    <loc>https://arbusz.github.io/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/</loc>
     <lastmod>2018-05-20T19:45:45+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/2018/03/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/</loc>
+    <loc>https://arbusz.github.io/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/</loc>
     <lastmod>2018-03-27T19:24:27+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://arbusz.github.io/</loc>
-    <lastmod>2018-09-02T17:10:44+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://arbusz.github.io/archives/</loc>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -96,6 +85,12 @@
   <url>
     <loc>https://arbusz.github.io/tags/goroutine/</loc>
     <lastmod>2018-09-02T17:02:35+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://arbusz.github.io/</loc>
+    <lastmod>2018-09-02T17:10:44+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -166,7 +161,7 @@
   </url>
   
   <url>
-    <loc>https://arbusz.github.io/1/01/%E5%8D%8F%E7%A8%8Bcoroutines/</loc>
+    <loc>https://arbusz.github.io/post/%E5%8D%8F%E7%A8%8Bcoroutines/</loc>
   </url>
   
   <url>

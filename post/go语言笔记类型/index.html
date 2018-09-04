@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html class="nojs" lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+<title>Go语言笔记－类型 – Hugo Zen theme</title>
+<meta name="created" content="2018-03-27T19:24:27&#43;0800">
+<meta name="modified" content="2018-03-27T19:24:27&#43;0800">
+
+<meta name="description" content="&lt;p&gt;&lt;/p&gt;">
+<meta property="og:site_name" content="Hugo Zen theme">
+<meta property="og:title" content="Go语言笔记－类型">
+<meta property="og:url" content="https://arbusz.github.io/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/">
+<meta name="og:image" content="https://arbusz.github.io/xdeb-org.jpg">
+<meta name="generator" content="Hugo 0.40.1" />
+<meta name="contact" content="info@example.org">
+<link rel="canonical" href="https://arbusz.github.io/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/print.css" media="print">
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Go语言笔记－类型",
+    "datePublished": "2018-03-27T19:24:27+08:00",
+    "dateModified": "2018-03-27T19:24:27+08:00",
+    "url" : "https://arbusz.github.io/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/",
+    "description": "\u003cp\u003e\u003c/p\u003e",
+    "image" : "https://arbusz.github.io/xdeb-org.jpg",
+    "keywords": ["Development","golang"],
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://arbusz.github.io/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Hugo Zen theme",
+      "url": "https://arbusz.github.io/",
+    }
+  }
+</script>
+
+</head>
+
+<body>
+<div class="page layout__page layout__sidebar-second">
+<header class="header layout__header" role="banner">
+
+<h1 class="header__site-name">
+<a href="/" title="Home" class="header__site-link" rel="home"><span>Hugo Zen theme</span></a>
+</h1>
+<div class="region header__region">
+
+
+<form class="search-form" method="get" action="https://duckduckgo.com/">
+<input type="search" name="q" class="search-text" placeholder="Search" title="Enter the terms you wish to search for." size="20" maxlength="128">
+<input type="hidden" name="sites" value="arbusz.github.io">
+<input type="submit" value="DuckDuckGo Search" class="hidden">
+</form>
+
+</div>
+</header>
+
+
+
+
+<nav class="main-menu layout__navigation" role="navigation">
+<h2 class="visually-hidden">Main menu</h2>
+<ul class="navbar">
+<li><a class="" href="/">Home</a></li>
+<li><a class="active" href="/post/">Post</a></li>
+</ul>
+</nav>
+
+
+<main class="main layout__main" role="main">
+<h1 class="title title-submitted">Go语言笔记－类型</h1>
+<article class="section-post single-view">
+<header>
+<p class="submitted">
+<time class="modified-date" datetime="2018-03-27T19:24:27&#43;08:00">27 March, 2018</time>
+</p>
+<div class="tags">
+Tags:
+<ul>
+<li><a href="/tags/development">Development</a></li>
+<li><a href="/tags/golang">golang</a></li>
+</ul>
+</div>
+</header>
+<div class="content">
+<p></p>
+
+<h1 id="类型">类型</h1>
+
+<h2 id="变量">变量</h2>
+
+<h4 id="简短模式">简短模式：</h4>
+
+<p>简短模式的限制
+- 定义变量，同时显式初始化
+- 不能提供数据类型
+- 只能用在函数内部</p>
+
+<p>简短模式也可以是部分退化的赋值操作，即一部分变量定义，一部分只是赋值</p>
+
+<pre><code class="language-go">func main() {
+	x := 100
+	println(&amp;x)
+
+	x,y := 200, &quot;abc&quot;
+	println(x,y)
+
+	y,z := &quot;asd&quot;, 100
+	println(y,z)
+}
+</code></pre>
+
+<p>在退化赋值中，靠左变量定义和靠右变量定义都可以.</p>
+
+<p><strong>可以看出，赋值退化的前提条件是，至少有一个新变量被定义，并且必须是同一作用域</strong>
+退化赋值的常用场景是在接受错误类型时，我们可以重复使用err变量</p>
+
+<h4 id="多变量赋值">多变量赋值</h4>
+
+<pre><code class="language-go">func main(){
+  x,y:= 1,2
+  x,y:= y+2, x+3
+  println(x,y)
+}
+</code></pre>
+
+<p>底层过程是先算出所有右值，再进行赋值操作</p>
+
+<p>####　未使用错误
+编译器将未使用的局部变量</p>
+
+<h2 id="常量">常量</h2>
+
+<p>常量必须是编译期可确定的基础数字类型（字符、字符串、数字和布尔值）。
+可以在函数代码块中定义常量</p>
+
+<pre><code class="language-go">func main(){
+	const x  = &quot;abc&quot;
+	println(x)
+
+	{
+		const x  = 100
+		println(x)
+		const y  = 1.1
+	}
+}
+</code></pre>
+
+<p>output:</p>
+
+<pre><code>abc
+100
+</code></pre>
+
+<p>在常量组中，如果不指定类型和初始化值，则与上一行非空常量右值相同</p>
+
+<pre><code class="language-go">import &quot;fmt&quot;
+
+func main() {
+	const (
+		x uint16 = 120
+		y
+		s = &quot;abc&quot;
+		z
+		p
+	)
+	fmt.Printf(&quot;%T, %v\n&quot;, y, y)
+	fmt.Printf(&quot;%T, %v\n&quot;, z, z)
+	fmt.Printf(&quot;%T, %v\n&quot;, p, p)
+}
+</code></pre>
+
+<p>output:</p>
+
+<pre><code>uint16, 120
+string, abc
+string, abc
+</code></pre>
+
+<h4 id="枚举">枚举</h4>
+
+<p>Go语言没有明确的emun类型，但是可以借助<code>iota</code>标识符实现一组自增量来实现枚举类型。
+<code>iota</code>的自增作用范围为常量组，可在多常量定义中使用多个<code>iota</code>。他们单独计数，只需确保组中每行常量个数相同。</p>
+
+<pre><code class="language-go">import &quot;fmt&quot;
+
+func main() {
+	const (
+		_, _ = iota, iota * 10
+		a, b
+		c, d
+		e, f = 10, iota
+	)
+	fmt.Println(a, b)
+	fmt.Println(c, d)
+	fmt.Println(e, f)
+}
+</code></pre>
+
+<p>output</p>
+
+<pre><code>1 10
+2 20
+10 3
+</code></pre>
+
+<h4 id="展开">展开</h4>
+
+<p>常量会在编译器预处理阶段直接展开，作为指令使用。数字常量不会分配存储空间，因此无法获取地址。</p>
+
+<h2 id="基本类型">基本类型</h2>
+
+<h4 id="别名">别名</h4>
+
+<pre><code class="language-go">byte alias for unit8
+rune alias for int32
+</code></pre>
+
+<p>但相同底层结构一致不一定是别名。</p>
+
+<p>##　引用类型
+特指<code>slice</code>、<code>map</code>、<code>channel</code>这三种预定义类型。
+与基本类型相比，它们拥有更复杂的存储结构，除了分配内存以外，还需初始化指针、长度、甚至哈希分布、数据队列等。</p>
+
+<h2 id="类型转换">类型转换</h2>
+
+<p>强制要求显式类型转换。</p>
+
+</div>
+</article>
+</main>
+
+
+
+<aside class="sidebar layout__second-sidebar" role="complementary">
+<section>
+<h4 class="menu"><a class="" href="/post/">Post</a></h4>
+<ul class="menu">
+<li><a class="" href="/post/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/">配置vim用于go开发</a></li>
+<li><a class="" href="/post/raft%E5%8D%8F%E8%AE%AE/">Raft协议</a></li>
+<li><a class="" href="/post/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/">两种并发模型</a></li>
+<li><a class="" href="/post/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">一个遍历目录的小程序</a></li>
+<li><a class="" href="/post/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/">包含nil指针的接口和nil接口</a></li>
+<li><a class="" href="/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/">Go语言笔记－函数</a></li>
+<li><a class="" href="/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">Go语言笔记－表达式</a></li>
+<li><a class="active" href="/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/">Go语言笔记－类型</a></li>
+<li><a class="" href="/post/%E5%8D%8F%E7%A8%8Bcoroutines/">协程Coroutines</a></li>
+</ul>
+</section>
+</aside>
+
+
+<footer class="footer layout__footer" role="contentinfo">
+<p><!--Creative Commons License-->This site is licensed under a <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.<!--/Creative Commons License--></p>
+<p>Powered by <a href="https://gohugo.io/">Hugo</a> and the <a href="https://github.com/frjo/hugo-theme-zen">Zen theme</a>.</p>
+
+</footer>
+
+</div>
+<div class="mobile-nav-wrapper hidden">
+  <div class="mobile-nav-cover"></div>
+  <a href="#navigation" class="mobile-nav-toggle" aria-haspopup="true" role="button">Menu</a>
+  <div class="mobile-nav-sheet"></div>
+</div>
+<script src="/js/jquery.slim.min.js"></script>
+<script src="/js/script.js"></script>
+</body>
+</html>
