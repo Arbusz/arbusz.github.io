@@ -10,6 +10,127 @@
     <atom:link href="https://arbusz.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Vim的go语言配置</title>
+      <link>https://arbusz.github.io/post/vim%E7%9A%84go%E8%AF%AD%E8%A8%80%E9%85%8D%E7%BD%AE/</link>
+      <pubDate>Sun, 02 Sep 2018 17:10:44 +0800</pubDate>
+      <guid>https://arbusz.github.io/post/vim%E7%9A%84go%E8%AF%AD%E8%A8%80%E9%85%8D%E7%BD%AE/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;
+
+&lt;p&gt;因为服务器没有图形界面，所以项配置一个vim作为go语言开发工具。
+服务器是centos，所以以下命令适用于centos系统：&lt;/p&gt;
+
+&lt;h5 id=&#34;首先检查vim是否开启python支持&#34;&gt;首先检查vim是否开启Python支持：&lt;/h5&gt;
+
+&lt;p&gt;运行&lt;code&gt;vim --version |grep python&lt;/code&gt;
+如果打印出的Python前面是减号，说明没有加入python支持，后面配置YCM就会报错。所以让我们重新编译vim。
+更新源&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo yum upgrade
+sduo yum update
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;升级gcc&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo yum install centos-release-scl -y
+sudo yum install devtoolset-3-toolchain -y
+sudo yum install gcc-c++
+sudo scl enable devtoolset-3 bash
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;安装Python开发环境&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo yum upgrade
+sudo yum install python-devel
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;升级vim&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;yum install ncurses-devel
+wget https://github.com/vim/vim/archive/master.zip
+unzip master.zip
+cd vim-master
+cd src/
+./configure --with-features=huge -enable-pythoninterp --with-python-config-dir=/usr/lib/python2.7/config
+sudo make
+sudo make install
+export PATH=/usr/local/bin:$PATH
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&#34;准备工作就绪-可以下载编译ycm了&#34;&gt;准备工作就绪，可以下载编译YCM了&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code&gt;git clone https://github.com/Valloric/YouCompleteMe.git ~/.vim/bundle/YouCompleteMe
+
+cd ~/.vim/bundle/YouCompleteMe
+
+git submodule update --init --recursive
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;编辑.vimrc文件，输入一下内容&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;set nocompatible
+filetype off
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin &#39;gmarik/Vundle.vim&#39;
+call vundle#end()
+filetype plugin indent on
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;使用vim打开，后输入 :PluginInstall
+完成后在 &lt;code&gt;Plugin ‘gmarik/Vundle.vim&lt;/code&gt;的下一行输入 &lt;code&gt;Plugin‘Valloric/YouCompleteMe&lt;/code&gt;，保持后退出。
+然后执行以下命令&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd ~/.vim/bundle/YouCompleteMe
+./install.py --gocode-completer
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果需要支持C类的补全，用下面的命令。
+&lt;code&gt;./install.py --clang-completer&lt;/code&gt;
+.vimrc的设置请参考官方文档。&lt;/p&gt;
+
+&lt;h5 id=&#34;然后-安装vim-go插件&#34;&gt;然后，安装vim-go插件&lt;/h5&gt;
+
+&lt;p&gt;&lt;code&gt;Plugin &#39;fatih/vim-go&#39;&lt;/code&gt;,然后PluginInstall.
+然后安装工具包的依赖
+:GoInstallBinaries的执行是交互式的，你需要回车确认。
+但是不幸的是，在安装时由于万里长城，一些包下不下来，只好一个一个git clone，然后go install.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vim ~/.vim/bundle/vim-go/plugin/go.vim
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到所有依赖包了，接下来就是把所有被墙的包git+go install。&lt;/p&gt;
+
+&lt;h5 id=&#34;vim-go默认是用ultisnips引擎插件-但这个插件需要单独安装&#34;&gt;Vim-go默认是用ultisnips引擎插件，但这个插件需要单独安装。&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code&gt;Plugin &#39;SirVer/ultisnips&#39;
+Plugin &#39;honza/vim-snippets&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;官方说这个插件和YCM冲突，所以在.vimrc里面设置一下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;quot; YCM settings
+let g:ycm_key_list_select_completion = [&#39;&#39;, &#39;&#39;]
+let g:ycm_key_list_previous_completion = [&#39;&#39;]
+let g:ycm_key_invoke_completion = &#39;&amp;lt;C-Space&amp;gt;&#39;
+
+&amp;quot; UltiSnips setting
+let g:UltiSnipsExpandTrigger=&amp;quot;&amp;lt;tab&amp;gt;&amp;quot;
+let g:UltiSnipsJumpForwardTrigger=&amp;quot;&amp;lt;c-b&amp;gt;&amp;quot;
+let g:UltiSnipsJumpBackwardTrigger=&amp;quot;&amp;lt;c-z&amp;gt;&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这样让YCM通过回车和向下的箭头来做list item正向选择，通过向上箭头做反向选择。通过ctrl+space来原地触发补齐提示。&lt;/p&gt;
+
+&lt;p&gt;其他个性化配置详见官方文档。&lt;/p&gt;
+
+&lt;p&gt;Reference:
+&amp;gt; &lt;a href=&#34;https://blog.csdn.net/nzyalj/article/details/75331822&#34;&gt;Centos7安装vim8.0 + YouCompleteMe&lt;/a&gt;
+&amp;gt; &lt;a href=&#34;http://www.cppblog.com/lizao2/archive/2017/05/08/214916.html&#34;&gt;centos安装youcompleteme及简单使用&lt;/a&gt;
+&amp;gt; &lt;a href=&#34;https://tonybai.com/2014/11/07/golang-development-environment-for-vim/&#34;&gt;Golang开发环境搭建-Vim篇&lt;/a&gt;
+&amp;gt; &lt;a href=&#34;http://vimzijun.net/2016/10/30/ultisnip/&#34;&gt;vim 入坑指南（六）插件 UltiSnips&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>配置vim用于go开发</title>
       <link>https://arbusz.github.io/post/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/</link>
       <pubDate>Sun, 02 Sep 2018 17:10:44 +0800</pubDate>
