@@ -73,6 +73,32 @@
 <h1 class="title">Post</h1>
 <article class="section-post list-view">
 <header>
+<h2 class="title title-submitted"><a href="/post/vim%E7%9A%84go%E8%AF%AD%E8%A8%80%E9%85%8D%E7%BD%AE/">Vim的go语言配置</a></h2>
+<p class="submitted">
+<time class="modified-date" datetime="2018-09-04T19:40:22&#43;08:00">4 September, 2018</time>
+</p>
+
+</header>
+<div class="content">
+
+</div>
+</article>
+
+<article class="section-post list-view">
+<header>
+<h2 class="title title-submitted"><a href="/post/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AEraft/">分布式协议 raft</a></h2>
+<p class="submitted">
+<time class="modified-date" datetime="2018-09-04T19:39:55&#43;08:00">4 September, 2018</time>
+</p>
+
+</header>
+<div class="content">
+
+</div>
+</article>
+
+<article class="section-post list-view">
+<header>
 <h2 class="title title-submitted"><a href="/post/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/">配置vim用于go开发</a></h2>
 <p class="submitted">
 <time class="modified-date" datetime="2018-09-02T17:10:44&#43;08:00">2 September, 2018</time>
@@ -107,6 +133,19 @@ Raft协议将一致性协议的核心内容分拆成为几个关键阶段，以�
 投票策略： - 每个节点只会给每个term投一票，具体的是否同意和后续的Safety有关。 - 当投票被瓜分后，所有的Candidate同时超时，然后有可能进入新一轮的票数被瓜分。为了避免这个问题，Raft采用一种很简单的方法：每个Candidate的election timeout从150ms-300ms之间随机取，那么第一个超时的Candidate就可以发起新一轮的leader election，带着最大的term_id给其它所有server发送RequestVoteRPC消息，从而自己成为leader，然后给他们发送心跳消息以告诉他们自己是主。
  Raft有2个timeout设置 1）从follow而转换到candidate的timeout： election timeout，设置为：150ms到300ms中的随机数。一个node到达这个timeout之后会发起一个新的选举term（递增的，大的表示新的），向其他节点发起投票请求，包括投给自己的那票，如果获得了大多数选票，那么自己就转换为leader状态 2）node成为leader之后会向其他node发送Append Entries，这个时间为heartbeat timeout 如果lead在实际使用中down掉，剩下的节点会重新开启1）和2）描述的选举流程，保证了高可用性 特殊情况:
 如果集群中剩下偶数个node，并且在选举的过程中有2个node获得相等的选票数，那么会开启新的一轮term选举。直到有一个node获得多数选票（随机的election timeout保证可行）  2. Log Replication 当Leader被选出来后，就可以接受客户端发来的请求了，每个请求包含一条需要被replicated state machines执行的命令。leader会把它作为一个log entry append到日志中，然后给其它的server发AppendEntriesRPC请求。当Leader确定一个log entry被safely replicated了（大多数副本已经将该命令写入日志当中），就apply这条log entry到状态机中然后返回结果给客户端。如果某个Follower宕机了或者运行的很慢，或者网络丢包了，则会一直给这个Follower发AppendEntriesRPC直到日志一致。
+</div>
+</article>
+
+<article class="section-post list-view">
+<header>
+<h2 class="title title-submitted"><a href="/post/%E4%B8%A4%E7%A7%8D%E4%B8%BB%E6%B5%81%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/">两种主流并发模型</a></h2>
+<p class="submitted">
+<time class="modified-date" datetime="2018-09-02T17:02:35&#43;08:00">2 September, 2018</time>
+</p>
+
+</header>
+<div class="content">
+<p></p>
 </div>
 </article>
 
@@ -182,32 +221,9 @@ CSP与Actors有几个重要的区别  在Actor的设计中，Actor与信箱是�
 </div>
 </article>
 
-<article class="section-post list-view">
-<header>
-<h2 class="title title-submitted"><a href="/post/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/">Go语言笔记－类型</a></h2>
-<p class="submitted">
-<time class="modified-date" datetime="2018-03-27T19:24:27&#43;08:00">27 March, 2018</time>
-</p>
-
-</header>
-<div class="content">
-<p></p>
-</div>
-</article>
-
-<article class="section-post list-view">
-<header>
-<h2 class="title title-submitted"><a href="/post/%E5%8D%8F%E7%A8%8Bcoroutines/">协程Coroutines</a></h2>
-<p class="submitted">
-<time class="modified-date" datetime="0001-01-01T00:00:00Z">1 January, 0001</time>
-</p>
-
-</header>
-<div class="content">
-<p></p>
-</div>
-</article>
-
+<nav class="pager">
+<a href="/post/page/2/" rel="next" class="pager-item pager-next">Next</a>
+</nav>
 
 </main>
 
@@ -217,8 +233,11 @@ CSP与Actors有几个重要的区别  在Actor的设计中，Actor与信箱是�
 <section>
 <h4 class="menu"><a class="active" href="/post/">Post</a></h4>
 <ul class="menu">
+<li><a class="" href="/post/vim%E7%9A%84go%E8%AF%AD%E8%A8%80%E9%85%8D%E7%BD%AE/">Vim的go语言配置</a></li>
+<li><a class="" href="/post/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AEraft/">分布式协议 raft</a></li>
 <li><a class="" href="/post/%E9%85%8D%E7%BD%AEvim%E7%94%A8%E4%BA%8Ego%E5%BC%80%E5%8F%91/">配置vim用于go开发</a></li>
 <li><a class="" href="/post/raft%E5%8D%8F%E8%AE%AE/">Raft协议</a></li>
+<li><a class="" href="/post/%E4%B8%A4%E7%A7%8D%E4%B8%BB%E6%B5%81%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/">两种主流并发模型</a></li>
 <li><a class="" href="/post/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/">两种并发模型</a></li>
 <li><a class="" href="/post/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">一个遍历目录的小程序</a></li>
 <li><a class="" href="/post/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/">包含nil指针的接口和nil接口</a></li>

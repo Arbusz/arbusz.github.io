@@ -10,6 +10,25 @@
     <atom:link href="https://arbusz.github.io/tags/goroutine/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>两种主流并发模型</title>
+      <link>https://arbusz.github.io/post/%E4%B8%A4%E7%A7%8D%E4%B8%BB%E6%B5%81%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Sun, 02 Sep 2018 17:02:35 +0800</pubDate>
+      <guid>https://arbusz.github.io/post/%E4%B8%A4%E7%A7%8D%E4%B8%BB%E6%B5%81%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;
+
+&lt;p&gt;传统的并发模型主要由两种实现的形式，一是同一个进程下，多个线程天然的共享内存，由程序对读写做同步控制(有锁或无锁).
+二是多个进程通过进程间通讯或者内存映射实现数据的同步.&lt;/p&gt;
+
+&lt;h2 id=&#34;actors模型&#34;&gt;Actors模型&lt;/h2&gt;
+
+&lt;p&gt;Actors模型更多的是用消息机制来实现并发，目标是让开发者不再考虑线程这种东西，每个Actor最多同时只能进行一样工作，Actor内部可以有自己的变量和数据。&lt;/p&gt;
+
+&lt;p&gt;在Actors模型中，每个Actor都有一个专属的命名”MailBox”, 其他Actor可以随时选择一个Actor通过邮箱收发数据,对于“MailBox”的维护，通常是使用发布订阅的机制实现的，比如我们可以定义发布者是自己，订阅者可以是某个Socket接口，另外的消息总线或者直接是目标Actor。&lt;/p&gt;
+
+&lt;p&gt;Actors模型避免了由操作系统进行任务调度的问题，在操作系统进程之上，多个Actor可能运行在同一个进程(或线程)中.这就节省了大量的Context切换。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>两种并发模型</title>
       <link>https://arbusz.github.io/post/%E4%B8%A4%E7%A7%8D%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/</link>
       <pubDate>Sun, 02 Sep 2018 17:02:35 +0800</pubDate>
