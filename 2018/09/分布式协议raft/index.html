@@ -327,12 +327,10 @@
 
 <p>说白了，一致性就是保证即使在部分副本宕机时，系统仍然能正常对外提供服务。一致性协议通常基于replicated state machines，即所有结点都从同一个state出发，都经过同样的一些操作序列（log），最后到达同样的state。</p>
 
-<blockquote>
 <p>系统中每个节点有三个组件
 - 状态机：当我们说一致性的时候，实际就是在说要保证这个状态机的一致性。状态机会从log里面取出所有的命令，然后执行一遍，得到的结果就是我们对外提供的保证了一致性的数据
 - log：保存了所有修改记录
 - 一致性模块：一致性模块算法就是用来保证写入的log的命令的一致性，这也是raft算法核心内容</p>
-</blockquote>
 
 <p>Raft协议将一致性协议的核心内容分拆成为几个关键阶段，以简化流程，提高协议的可理解性。</p>
 
@@ -340,25 +338,39 @@
 
 <h2 id="1-leader-election-选主">1. Leader election（选主）</h2>
 
-<p>Raft协议的每个副本都会处于三种状态之一：Leader、Follower、Candidate。
-&gt;- Leader：所有请求的处理者，Leader副本接受client的更新请求，本地处理后再同步至多个其他副本；
-&gt;- Follower：请求的被动更新者，从Leader接受更新请求，然后写入本地日志文件
-&gt;- Candidate：如果Follower副本在一段时间内没有收到Leader副本的心跳，则判断Leader可能已经故障，此时启动选主过程，此时副本会变成Candidate状态，直到选主结束。</p>
+<p>Raft协议的每个副本都会处于三种状态之一：Leader、Follower、Candidate。</p>
 
-<p>时间被分为很多连续的随机长度term，term有唯一的Id。每个id一开始就进行选主。
-- 1.Follower将自己维护的current_term_id加1
-- 2.将自己的状态转为Candidate
-- 3.发送RequestVoteRPC消息（附带current_term_id）给其他所有server</p>
+<blockquote>
+<ul>
+<li>Leader：所有请求的处理者，Leader副本接受client的更新请求，本地处理后再同步至多个其他副本；</li>
+<li>Follower：请求的被动更新者，从Leader接受更新请求，然后写入本地日志文件</li>
+<li>Candidate：如果Follower副本在一段时间内没有收到Leader副本的心跳，则判断Leader可能已经故障，此时启动选主过程，此时副本会变成Candidate状态，直到选主结束。</li>
+</ul>
+</blockquote>
 
-<p>此过程会有三种结果：
-- 自己被选为主。当收到majority的投票后，状态切成了Leader，并定期给其他的所有的server发心跳消息（不带log的AppendEntriesRPC）以告诉对方自己是current_term_id所标识的term的Leader。每个term最多有一个leader，term id作为logical lock，在每个RPC消息中都会带上，用于检测过期的消息。当一个server收到的RPC消息中的rpc_term_id比本地的current_term_id更大时，就更新
-current_term_id为rpc_term_id，并且如果当前state为Leader或者Candidate时，将自己的状态切为Follower。如果更小，则拒绝这个消息。
-- 别人成了主。当Candidate在等待投票的过程中，收到了大于或者等与本地的current_term_id声明对方是Leader的AppendEnteriesRPC时，则将自己的的state切换为Follower，并更新自己本地的current_term_id。
-- 没有选出主。没有Leader被选出，每个Candidate等待投票的额过程就已超时，接着Candidates就会将本地的current_term_id再加一，发起RequestVoteRPC进行新一轮的Leader election。</p>
+<p>时间被分为很多连续的随机长度term，term有唯一的Id。每个id一开始就进行选主。</p>
 
-<p>投票策略：
-- 每个节点只会给每个term投一票，具体的是否同意和后续的Safety有关。
-- 当投票被瓜分后，所有的Candidate同时超时，然后有可能进入新一轮的票数被瓜分。为了避免这个问题，Raft采用一种很简单的方法：每个Candidate的election timeout从150ms-300ms之间随机取，那么第一个超时的Candidate就可以发起新一轮的leader election，带着最大的term_id给其它所有server发送RequestVoteRPC消息，从而自己成为leader，然后给他们发送心跳消息以告诉他们自己是主。</p>
+<ul>
+<li>1.Follower将自己维护的current_term_id加1</li>
+<li>2.将自己的状态转为Candidate</li>
+<li>3.发送RequestVoteRPC消息（附带current_term_id）给其他所有server</li>
+</ul>
+
+<p>此过程会有三种结果：</p>
+
+<ul>
+<li>自己被选为主。当收到majority的投票后，状态切成了Leader，并定期给其他的所有的server发心跳消息（不带log的AppendEntriesRPC）以告诉对方自己是current_term_id所标识的term的Leader。每个term最多有一个leader，term id作为logical lock，在每个RPC消息中都会带上，用于检测过期的消息。当一个server收到的RPC消息中的rpc_term_id比本地的current_term_id更大时，就更新
+current_term_id为rpc_term_id，并且如果当前state为Leader或者Candidate时，将自己的状态切为Follower。如果更小，则拒绝这个消息。</li>
+<li>别人成了主。当Candidate在等待投票的过程中，收到了大于或者等与本地的current_term_id声明对方是Leader的AppendEnteriesRPC时，则将自己的的state切换为Follower，并更新自己本地的current_term_id。</li>
+<li>没有选出主。没有Leader被选出，每个Candidate等待投票的额过程就已超时，接着Candidates就会将本地的current_term_id再加一，发起RequestVoteRPC进行新一轮的Leader election。</li>
+</ul>
+
+<p>投票策略：</p>
+
+<ul>
+<li>每个节点只会给每个term投一票，具体的是否同意和后续的Safety有关。</li>
+<li>当投票被瓜分后，所有的Candidate同时超时，然后有可能进入新一轮的票数被瓜分。为了避免这个问题，Raft采用一种很简单的方法：每个Candidate的election timeout从150ms-300ms之间随机取，那么第一个超时的Candidate就可以发起新一轮的leader election，带着最大的term_id给其它所有server发送RequestVoteRPC消息，从而自己成为leader，然后给他们发送心跳消息以告诉他们自己是主。</li>
+</ul>
 
 <blockquote>
 <p>Raft有2个timeout设置
