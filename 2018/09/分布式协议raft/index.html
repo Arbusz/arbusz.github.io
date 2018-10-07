@@ -327,10 +327,13 @@
 
 <p>说白了，一致性就是保证即使在部分副本宕机时，系统仍然能正常对外提供服务。一致性协议通常基于replicated state machines，即所有结点都从同一个state出发，都经过同样的一些操作序列（log），最后到达同样的state。</p>
 
-<p>系统中每个节点有三个组件
-&gt;- 状态机：当我们说一致性的时候，实际就是在说要保证这个状态机的一致性。状态机会从log里面取出所有的命令，然后执行一遍，得到的结果就是我们对外提供的保证了一致性的数据
-&gt;- log：保存了所有修改记录
-&gt;- 一致性模块：一致性模块算法就是用来保证写入的log的命令的一致性，这也是raft算法核心内容</p>
+<p>系统中每个节点有三个组件</p>
+
+<ul>
+<li>状态机：当我们说一致性的时候，实际就是在说要保证这个状态机的一致性。状态机会从log里面取出所有的命令，然后执行一遍，得到的结果就是我们对外提供的保证了一致性的数据</li>
+<li>log：保存了所有修改记录</li>
+<li>一致性模块：一致性模块算法就是用来保证写入的log的命令的一致性，这也是raft算法核心内容</li>
+</ul>
 
 <p>Raft协议将一致性协议的核心内容分拆成为几个关键阶段，以简化流程，提高协议的可理解性。</p>
 
@@ -372,11 +375,9 @@ current_term_id为rpc_term_id，并且如果当前state为Leader或者Candidate�
 <li>当投票被瓜分后，所有的Candidate同时超时，然后有可能进入新一轮的票数被瓜分。为了避免这个问题，Raft采用一种很简单的方法：每个Candidate的election timeout从150ms-300ms之间随机取，那么第一个超时的Candidate就可以发起新一轮的leader election，带着最大的term_id给其它所有server发送RequestVoteRPC消息，从而自己成为leader，然后给他们发送心跳消息以告诉他们自己是主。</li>
 </ul>
 
-<blockquote>
 <p>Raft有2个timeout设置
 1）从follow而转换到candidate的timeout： election timeout，设置为：150ms到300ms中的随机数。一个node到达这个timeout之后会发起一个新的选举term（递增的，大的表示新的），向其他节点发起投票请求，包括投给自己的那票，如果获得了大多数选票，那么自己就转换为leader状态
 2）node成为leader之后会向其他node发送Append Entries，这个时间为heartbeat timeout</p>
-</blockquote>
 
 <p>如果lead在实际使用中down掉，剩下的节点会重新开启1）和2）描述的选举流程，保证了高可用性
 <em>特殊情况:</em></p>
@@ -422,11 +423,14 @@ current_term_id为rpc_term_id，并且如果当前state为Leader或者Candidate�
 
 <p><img src="http://upload-images.jianshu.io/upload_images/4593875-4be0b2c6ee38dcf4.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="example2" /></p>
 
-<p>这里面隐含一个很严重的问题：一应用到状态机的日志被截断：
-1. 在阶段a，term为2，S1是Leader，且S1写入日志（term, index）为(2, 2)，并且日志被同步写入了S2。
-2. 在阶段b，S1离线，触发一次新的选主，此时S5被选为新的Leader，此时系统term为3，且写入了日志（term, index）为（3， 2）。
-3. S5尚未将日志推送到Followers变离线了，进而触发了一次新的选主，而之前离线的S1经过重新上线后被选中变成Leader，此时系统term为4，此时S1会将自己的日志同步到Followers，按照上图就是将日志（2， 2）同步到了S3，而此时由于该日志已经被同步到了多数节点（S1, S2, S3），因此，此时日志（2，2）可以被commit了（即更新到状态机）。
-4. 在阶段d，S1又很不幸地下线了，系统触发一次选主，而S5有可能被选为新的Leader（这是因为S5可以满足作为主的一切条件：1. term = 3 &gt; 2, 2. 最新的日志index为2，比大多数节点（如S2/S3/S4的日志都新），然后S5会将自己的日志更新到Followers，于是S2、S3中已经被提交的日志（2，2）被截断了。</p>
+<p>这里面隐含一个很严重的问题：一应用到状态机的日志被截断</p>
+
+<ol>
+<li>在阶段a，term为2，S1是Leader，且S1写入日志（term, index）为(2, 2)，并且日志被同步写入了S2。</li>
+<li>在阶段b，S1离线，触发一次新的选主，此时S5被选为新的Leader，此时系统term为3，且写入了日志（term, index）为（3， 2）。</li>
+<li>S5尚未将日志推送到Followers变离线了，进而触发了一次新的选主，而之前离线的S1经过重新上线后被选中变成Leader，此时系统term为4，此时S1会将自己的日志同步到Followers，按照上图就是将日志（2， 2）同步到了S3，而此时由于该日志已经被同步到了多数节点（S1, S2, S3），因此，此时日志（2，2）可以被commit了（即更新到状态机）。</li>
+<li>在阶段d，S1又很不幸地下线了，系统触发一次选主，而S5有可能被选为新的Leader（这是因为S5可以满足作为主的一切条件：1. term = 3 &gt; 2, 2. 最新的日志index为2，比大多数节点（如S2/S3/S4的日志都新），然后S5会将自己的日志更新到Followers，于是S2、S3中已经被提交的日志（2，2）被截断了。</li>
+</ol>
 
 <p>为了避免这种错误，对协议作出修改
 &gt;只允许主节点提交包含当前term的日志</p>
@@ -452,10 +456,15 @@ leader向follower发送心跳，具体执行修改操作，此后数据在集群
 <p>在实际的系统中，不能让日志无限增长，否则系统重启时需要花很长的时间进行回放，从而影响availability。Raft采用对整个系统进行snapshot来处理，snapshot之前的日志都可以丢弃。Snapshot技术在Chubby和ZooKeeper系统中都有采用。
 &gt;Raft用的方案是：每个副本独立的对自己的系统状态进行Snapshot，并且只能对已经提交的日志记录（已经应用到状态机）进行snapshot。</p>
 
-<p>Snapshot中包含以下内容：
-- 日志元数据，最后一条commited log entry的 (log index, last_included_term)。这两个值在Snapshot之后的第一条log entry的AppendEntriesRPC的consistency check的时候会被用上。一旦这个server做完了snapshot，就可以把这条记录的最后一条log index及其之前的所有的log entry都删掉。</p>
+<p>Snapshot中包含以下内容：</p>
 
-<h2 id="系统状态机-存储系统当前状态">- 系统状态机：存储系统当前状态</h2>
+<ul>
+<li>日志元数据，最后一条commited log entry的 (log index, last_included_term)。这两个值在Snapshot之后的第一条log entry的AppendEntriesRPC的consistency check的时候会被用上。一旦这个server做完了snapshot，就可以把这条记录的最后一条log index及其之前的所有的log entry都删掉。</li>
+<li>系统状态机：存储系统当前状态
+<br /></li>
+</ul>
+
+<hr />
 
 <h2 id="4-membership-changes-待补充">4. Membership Changes（待补充）</h2>
               
