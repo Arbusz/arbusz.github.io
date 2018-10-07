@@ -328,9 +328,9 @@
 <p>说白了，一致性就是保证即使在部分副本宕机时，系统仍然能正常对外提供服务。一致性协议通常基于replicated state machines，即所有结点都从同一个state出发，都经过同样的一些操作序列（log），最后到达同样的state。</p>
 
 <p>系统中每个节点有三个组件
-- 状态机：当我们说一致性的时候，实际就是在说要保证这个状态机的一致性。状态机会从log里面取出所有的命令，然后执行一遍，得到的结果就是我们对外提供的保证了一致性的数据
-- log：保存了所有修改记录
-- 一致性模块：一致性模块算法就是用来保证写入的log的命令的一致性，这也是raft算法核心内容</p>
+&gt;- 状态机：当我们说一致性的时候，实际就是在说要保证这个状态机的一致性。状态机会从log里面取出所有的命令，然后执行一遍，得到的结果就是我们对外提供的保证了一致性的数据
+&gt;- log：保存了所有修改记录
+&gt;- 一致性模块：一致性模块算法就是用来保证写入的log的命令的一致性，这也是raft算法核心内容</p>
 
 <p>Raft协议将一致性协议的核心内容分拆成为几个关键阶段，以简化流程，提高协议的可理解性。</p>
 
@@ -375,12 +375,13 @@ current_term_id为rpc_term_id，并且如果当前state为Leader或者Candidate�
 <blockquote>
 <p>Raft有2个timeout设置
 1）从follow而转换到candidate的timeout： election timeout，设置为：150ms到300ms中的随机数。一个node到达这个timeout之后会发起一个新的选举term（递增的，大的表示新的），向其他节点发起投票请求，包括投给自己的那票，如果获得了大多数选票，那么自己就转换为leader状态
-2）node成为leader之后会向其他node发送Append Entries，这个时间为heartbeat timeout
-如果lead在实际使用中down掉，剩下的节点会重新开启1）和2）描述的选举流程，保证了高可用性
+2）node成为leader之后会向其他node发送Append Entries，这个时间为heartbeat timeout</p>
+</blockquote>
+
+<p>如果lead在实际使用中down掉，剩下的节点会重新开启1）和2）描述的选举流程，保证了高可用性
 <em>特殊情况:</em></p>
 
 <h2 id="如果集群中剩下偶数个node-并且在选举的过程中有2个node获得相等的选票数-那么会开启新的一轮term选举-直到有一个node获得多数选票-随机的election-timeout保证可行">如果集群中剩下偶数个node，并且在选举的过程中有2个node获得相等的选票数，那么会开启新的一轮term选举。直到有一个node获得多数选票（随机的election timeout保证可行）</h2>
-</blockquote>
 
 <h2 id="2-log-replication">2. Log Replication</h2>
 
