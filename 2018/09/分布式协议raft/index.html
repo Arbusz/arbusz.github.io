@@ -325,11 +325,14 @@
 <p>一致性是构建容错性的分布式系统的基础。在一个具有一致性的性质的集群里，同一时刻所有的节点对存储在其中的某个值都有相同的结果，即对其共享的存储保持一致性。集群具有自动恢复的性质，少数节点失效时不会影响整个集群的正常工作。</p>
 </blockquote>
 
-<p>说白了，一致性就是保证即使在部分副本宕机时，系统仍然能正常对外提供服务。一致性协议通常基于replicated state machines，即所有结点都从同一个state出发，都经过同样的一些操作序列（log），最后到达同样的state。
-&gt;系统中每个节点有三个组件
-&gt;- 状态机：当我们说一致性的时候，实际就是在说要保证这个状态机的一致性。状态机会从log里面取出所有的命令，然后执行一遍，得到的结果就是我们对外提供的保证了一致性的数据
-&gt;- log：保存了所有修改记录
-&gt;- 一致性模块：一致性模块算法就是用来保证写入的log的命令的一致性，这也是raft算法核心内容</p>
+<p>说白了，一致性就是保证即使在部分副本宕机时，系统仍然能正常对外提供服务。一致性协议通常基于replicated state machines，即所有结点都从同一个state出发，都经过同样的一些操作序列（log），最后到达同样的state。</p>
+
+<blockquote>
+<p>系统中每个节点有三个组件
+- 状态机：当我们说一致性的时候，实际就是在说要保证这个状态机的一致性。状态机会从log里面取出所有的命令，然后执行一遍，得到的结果就是我们对外提供的保证了一致性的数据
+- log：保存了所有修改记录
+- 一致性模块：一致性模块算法就是用来保证写入的log的命令的一致性，这也是raft算法核心内容</p>
+</blockquote>
 
 <p>Raft协议将一致性协议的核心内容分拆成为几个关键阶段，以简化流程，提高协议的可理解性。</p>
 
@@ -693,6 +696,40 @@ leader向follower发送心跳，具体执行修改操作，此后数据在集群
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/10/nmap%E6%80%BB%E7%BB%93/">
+                <h3 class="media-heading">Nmap总结</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Oct 10, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/10/%E9%A9%AC%E6%8B%89%E8%BD%A6%E7%AE%97%E6%B3%95/">
+                <h3 class="media-heading">马拉车算法</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Oct 10, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://arbusz.github.io/2018/09/vim%E7%9A%84go%E8%AF%AD%E8%A8%80%E9%85%8D%E7%BD%AE/">
                 <h3 class="media-heading">Vim的go语言配置</h3>
               </a>
@@ -826,23 +863,6 @@ leader向follower发送心跳，具体执行修改操作，此后数据在集群
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://arbusz.github.io/1/01/%E5%8D%8F%E7%A8%8Bcoroutines/">
-                <h3 class="media-heading">协程Coroutines</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 0001
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p></p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -850,7 +870,7 @@ leader向follower发送心跳，具体执行修改操作，此后数据在集群
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         9 posts found
+         11 posts found
       </p>
     </div>
   </div>
