@@ -11,6 +11,15 @@
     
     
     <item>
+      <title>Category</title>
+      <link>https://arbusz.github.io/categories/category/</link>
+      <pubDate>Sat, 20 Oct 2018 15:43:46 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/categories/category/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Development</title>
       <link>https://arbusz.github.io/categories/development/</link>
       <pubDate>Sun, 20 May 2018 19:59:36 +0800</pubDate>
@@ -25,6 +34,15 @@
       <pubDate>Sun, 02 Sep 2018 17:10:44 +0800</pubDate>
       
       <guid>https://arbusz.github.io/categories/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Haskell</title>
+      <link>https://arbusz.github.io/categories/haskell/</link>
+      <pubDate>Thu, 06 Dec 2018 16:54:01 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/categories/haskell/</guid>
       <description></description>
     </item>
     
@@ -47,6 +65,15 @@
     </item>
     
     <item>
+      <title>Subcategory</title>
+      <link>https://arbusz.github.io/categories/subcategory/</link>
+      <pubDate>Sat, 20 Oct 2018 15:43:46 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/categories/subcategory/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Vim</title>
       <link>https://arbusz.github.io/categories/vim/</link>
       <pubDate>Sun, 02 Sep 2018 17:10:44 +0800</pubDate>
@@ -61,6 +88,15 @@
       <pubDate>Mon, 04 Jun 2018 21:26:20 +0800</pubDate>
       
       <guid>https://arbusz.github.io/categories/wtf/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>函数式编程</title>
+      <link>https://arbusz.github.io/categories/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/</link>
+      <pubDate>Thu, 06 Dec 2018 16:54:01 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/categories/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/</guid>
       <description></description>
     </item>
     

@@ -1,0 +1,1343 @@
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+  
+
+
+  
+
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.40.1 with theme Tranquilpeak 0.4.3-BETA">
+    <title>Haskell函数式编程初探</title>
+    <meta name="author" content="Arbus">
+    <meta name="keywords" content="Haskell">
+
+    <link rel="icon" href="https://arbusz.github.io/favicon.png">
+    
+
+    
+    <meta name="description" content="">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Haskell函数式编程初探">
+    <meta property="og:url" content="/2018/12/haskell%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%88%9D%E6%8E%A2/">
+    <meta property="og:site_name" content="Arbus&#39;s Little Site">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Arbus&#39;s Little Site">
+    <meta name="twitter:description" content="">
+    
+    
+
+    
+    
+
+    
+      <meta property="og:image" content="//www.gravatar.com/avatar/7c65f43625271645a726047600797446?s=640">
+    
+
+    
+    
+    
+
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://arbusz.github.io/css/style-jsjn0006wyhpyzivf6yceb31gvpjatbcs3qzjvlumobfnugccvobqwxnnaj8.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://arbusz.github.io/">Arbus&#39;s Little Site</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://arbusz.github.io/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="//www.gravatar.com/avatar/7c65f43625271645a726047600797446?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://arbusz.github.io/#about">
+          <img class="sidebar-profile-picture" src="//www.gravatar.com/avatar/7c65f43625271645a726047600797446?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Arbus</h4>
+        
+          <h5 class="sidebar-profile-bio">A student from DLUT.</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/">
+    
+      
+      
+      <span class="sidebar-button-desc">Go语言笔记－函数</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/03/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/">
+    
+      
+      
+      <span class="sidebar-button-desc">Go语言笔记－类型</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+    
+      
+      
+      <span class="sidebar-button-desc">Go语言笔记－表达式</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/09/vim%E7%9A%84go%E8%AF%AD%E8%A8%80%E9%85%8D%E7%BD%AE/">
+    
+      
+      
+      <span class="sidebar-button-desc">Vim的go语言配置</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/09/%E4%B8%A4%E7%A7%8D%E4%B8%BB%E6%B5%81%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/">
+    
+      
+      
+      <span class="sidebar-button-desc">两种主流并发模型</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/09/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AEraft/">
+    
+      
+      
+      <span class="sidebar-button-desc">分布式协议　Raft</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/">
+    
+      
+      
+      <span class="sidebar-button-desc">包含nil指针的接口和nil接口</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/Arbusz" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      Haskell函数式编程初探
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-12-06T16:54:01&#43;08:00">
+        
+  
+  
+  
+  
+    6 December 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://arbusz.github.io/categories/%e5%87%bd%e6%95%b0%e5%bc%8f%e7%bc%96%e7%a8%8b">函数式编程</a>, 
+    
+      <a class="category-link" href="https://arbusz.github.io/categories/haskell">Haskell</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p></p>
+
+<h1 id="haskell-函数式编程初探">Haskell 函数式编程初探</h1>
+
+<p>一直以来对函数式编程非常好奇，但是没有用到的机会。上次去图书馆还书，记起二哥写过Haskell的博客，刚好自己这学期有时间，就借了一本Haskell的书，开始了我的Haskell之旅。</p>
+
+<h2 id="函数式的特点">函数式的特点</h2>
+
+<p>函数式编程与之前用到的面向过程编程、面向对象编程都有很大不同。尤其是Haskell这样的纯函数式语言。</p>
+
+<p>引用维基上的话：</p>
+
+<blockquote>
+<p>In <a href="https://en.wikipedia.org/wiki/Computer_science">computer science</a>, <strong>functional programming</strong> is a <a href="https://en.wikipedia.org/wiki/Programming_paradigm">programming paradigm</a>—a style of building the structure and elements of <a href="https://en.wikipedia.org/wiki/Computer_program">computer programs</a>—that treats <a href="https://en.wikipedia.org/wiki/Computation">computation</a> as the evaluation of <a href="https://en.wikipedia.org/wiki/Function_(mathematics)">mathematical functions</a> and avoids changing-<a href="https://en.wikipedia.org/wiki/Program_state">state</a> and <a href="https://en.wikipedia.org/wiki/Immutable_object">mutable</a> data.</p>
+</blockquote>
+
+<p>就是说，函数式编程作为一种编程范式，主要的思想就是将电脑运算视为函数计算，把运算过程写成一系列嵌套的函数调用。</p>
+
+<p>函数式编程有以下几个特点：</p>
+
+<ol>
+<li>stateless</li>
+</ol>
+
+<p>函数不维护任何状态。函数式编程的核心精神是 stateless，简而言之就是它不能存在状态，你给我数据我处理完扔出来，里面的数据是不变的。</p>
+
+<ol>
+<li>immutable</li>
+</ol>
+
+<p>输入数据是不可能的，动了输入数据就有危险，所以要返回新的数据集。</p>
+
+<p>这几个特点带来的好处是：</p>
+
+<ol>
+<li>没有状态就没有伤害</li>
+<li>并行执行无伤害</li>
+<li>Copy-Paste重构代码无伤害</li>
+<li>函数的执行上没有顺序问题</li>
+</ol>
+
+<h2 id="haskell作为函数式编程语言的特点">Haskell作为函数式编程语言的特点</h2>
+
+<p>Haskell是一门纯函数式语言，它编写的函数是完全没有状态的函数。</p>
+
+<p>除此之外，Haskell还具有惰性求值的特性，就是说所有的值只有在用到的时候才会进行计算，用不到就不会计算。它的优点是：</p>
+
+<ul>
+<li><p>避免了不需要的运算，从而提高的性能。</p></li>
+
+<li><p>使创建无限的数据结构成为可能</p></li>
+</ul>
+
+<p>另外值得一提的是，Haskell是静态的。</p>
+
+<h2 id="基本数据类型">基本数据类型</h2>
+
+<p>Haskell的数据类型与C的大同小异。</p>
+
+<ul>
+<li>Int</li>
+<li>Integer： 无界的整型</li>
+<li>Float</li>
+<li>Double</li>
+<li>Bool</li>
+<li>Char</li>
+<li>Tuple</li>
+</ul>
+
+<h2 id="基本运算">基本运算</h2>
+
+<p>Haskell拥有与C不太一样的符号体系。基本来说也是大同小异。</p>
+
+<p><code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>||</code> <code>&amp;&amp;</code> <code>==</code> 与C完全一样。</p>
+
+<p>取反要用<code>not</code> 。</p>
+
+<p>模数运算要显式调用<code>mod</code> 函数。</p>
+
+<h2 id="调用函数">调用函数</h2>
+
+<p>要区分Haskell与C调用函数的区别</p>
+
+<pre><code class="language-haskell">--已知函数f,g
+f x --这就是计算f(x)了
+g x y --这就是计算g(x,y)
+--上面提到的模数运算
+mod 3 2 --计算3除以2的余数
+--如果想改用中缀表达，需要加上反引号
+3 `mod` 2 --任何接受两个参数的函数理论上都可以用这种方法改写为中缀表达
+</code></pre>
+
+<h2 id="列表">列表</h2>
+
+<p>在Haskell中，列表是一种特别常用的单类型的数据结构。</p>
+
+<pre><code class="language-haskell">[4,8,15,16,3,22]
+</code></pre>
+
+<p>列表可以被拼接</p>
+
+<pre><code class="language-haskell">[1,2]++[3,4]++[5,6]
+-- [1,2,3,4,5,6]
+&quot;hello&quot; ++ &quot;&quot; ++ &quot;world&quot;
+--&quot;hello world&quot;
+</code></pre>
+
+<p>这里有一件很有意思的事要提一下，Haskell中的字符串实际上是一组字符组成的列表。也就是说字符串实际上是列表的语法糖而已。Cool! 所以呢，我们可以用所有处理字符串的方法处理列表。</p>
+
+<p>列表前插一个元素的成本几乎为0：</p>
+
+<pre><code class="language-haskell">5:[1,2,3,4,5]
+--[5,1,2,3,4,5]
+</code></pre>
+
+<p>后接元素只能用列表拼接：</p>
+
+<pre><code class="language-haskell">[1,2,3,4] ++ [5]
+--[1,2,3,4,5]
+</code></pre>
+
+<p>更有趣的是，<code>[1,2,3,4,5]</code> 实际上是<code>1:2:3:4:5:[]</code> 的语法糖而已。<code>[]</code> 表示一个空列表，从前面插入5，就变成了<code>[5]</code> ，以此类推。</p>
+
+<h3 id="对列表的操作">对列表的操作</h3>
+
+<ul>
+<li>构造列表</li>
+</ul>
+
+<pre><code class="language-haskell">  --使用区间
+  [1..5]
+  --[1,2,3,4,5]
+  
+  --等差推导
+  [2,4..10]
+  --[2,4,6,8,10]
+  
+  --无限大的数组
+  [1..] --惰性求值特性
+  
+  
+  --列表推导式
+  [x*2 | x &lt;- [1..10], x &gt;= 12]
+  
+  --运用这个特点我们能做一些很酷的事情，比如求前10个7的倍数或末尾含7的数：
+  take 10 [x | x &lt;- [1..], x `mod` 7 ==0 || x `mod` 10 == 7]
+</code></pre>
+
+<ul>
+<li>访问列表</li>
+</ul>
+
+<pre><code class="language-haskell">  --按照索引取得列表元素：！！
+  &quot;hello world&quot; !! 2
+  -- l
+  
+  --返回列表的头：head
+  head [1,2,3,4,5]
+  --1
+  
+  --返回列表的尾：tail
+  tail [1,2,3,4,5]
+  --[2,3,4,5]
+  
+  --返回列表的最后一个元素
+  last [1,2,3,4,5]
+  -- 5
+  
+  --返回除去头外的列表
+  init [1,2,3,4,5]
+  -- [2,3,4,5]
+  
+  --取一个数字和一个列表作为参数，返回列表中指定的前几个元素
+  take 3 [1,2,3,4]
+  --[1,2,3]
+  take 0 [1,2,3]
+  --[]
+</code></pre>
+
+<ul>
+<li>比较列表</li>
+</ul>
+
+<p>只要列表内的元素是可以比较的，那就可以使用<code>&gt;</code> <code>&lt;</code> <code>&lt;=</code> <code>&gt;=</code> 来比较两个列表的大小，它会按照字典顺序。非空列表总认为比空列表更大。</p>
+
+<ul>
+<li>其他操作</li>
+</ul>
+
+<pre><code class="language-haskell">  --返回列表的长度
+  length [1,2,3,4,5]
+  --5
+  
+  --检查列表是否为空
+  null []
+  --true
+  
+  --删除一个列表中指定的前几个元素
+  drop 2 [1,2,3,4]
+  --[3,4]
+  drop 0 [1,2,3,4]
+  --[1,2,3,4]
+  drop 100 [1,2,3,4]
+  --[]
+  
+  --返回列表最大元素
+  maximum [1,2,3,4,5]
+  --5
+  
+  --sum返回一个列表的和，product函数返回一个列表的积、、
+  sum [2,3,1,5,4]
+  product [1,2,3,4,5]
+  
+  --判断一个元素是否包含于一个列表，常用中缀形式
+  3 `elem` [1,3,4,5]
+  --True
+</code></pre>
+
+<h2 id="编写函数">编写函数</h2>
+
+<pre><code class="language-haskell">  --定义一个函数triple，返回输入参数的三倍。
+  triple x = 3 * x
+  
+  --拥有多个参数的函数
+  length x y = sqrt (x * x + y * y)
+</code></pre>
+
+<p>### 模式匹配（pattern matching）</p>
+
+<p>如果考虑对函数的参数分类，检查参数的结构是否为真，可以采用模式匹配。</p>
+
+<pre><code class="language-haskell">  --识别1-3数字并转换为对应的单词，其他的对应输出为”not between 1 and 3&quot;
+  toWord 1 = &quot;one&quot;
+  toWord 2 = &quot;two&quot;
+  toWord 3 = &quot;three&quot;
+  toWord x = &quot;noot between 1 and 3&quot;
+</code></pre>
+
+<p>模式匹配的顺序是自上而下的。</p>
+
+<p>哨卫（guard）用来检查参数的性质是否为真：</p>
+
+<pre><code class="language-haskell">  bmiTell bmi
+     | bmi &lt;= 18.5 = &quot;underweight&quot;
+     | bmi &lt;= 25.0 = &quot;normal&quot;
+     | bmi &lt;= 30.0 = &quot;overweight&quot;
+     | otherwise = &quot;go die&quot;
+</code></pre>
+
+<h3 id="递归">递归</h3>
+
+<p>模式匹配可以帮助我们实现很多事情，比如下面的求阶乘的例子。</p>
+
+<pre><code class="language-haskell">factorial 0 = 1
+factorial n = n * factorial (n-1)
+</code></pre>
+
+<p>上面的函数就是使用了模式匹配的阶乘函数。我们可以在C语言里使用循环，但是Haskell没有循环，但是依旧可以用递归实现。理论上来说所有的循环都能转换为递归。</p>
+
+<p>下面再给出一个递归的例子，求了列表元素的最大值：</p>
+
+<pre><code class="language-haskell">maxInList [] = error &quot;the list is empty&quot;
+maxInList [x] = x
+maxInList (x:xs) = max x (maxInList xs)
+</code></pre>
+
+<p>如果一个列表里只有一个元素，那么这个元素就是最大的。否则，就应该是这个列表第一个值和其余部分中的最大值中比较大的那个。</p>
+
+<p>总结一下上面几个例子，不难得出Haskell递归的固定模式。首先定义基准条件，也就是对应特殊输入的简单非递归解。然后将问题分解为一个或者多个子问题，并递归的调用自身，最后基于子问题里得到的结果，组合成为最终解。</p>
+
+<p>最后看一下快速排序的实现：</p>
+
+<pre><code class="language-haskell">quicksort [] = []
+quicksort (x:xs) = (quicksort [y | y &lt;- xs, y &lt; x]) ++ [x] ++ (quicksort [y | y &lt;- xs, y &gt;= x])
+</code></pre>
+
+<h2 id="高阶函数">高阶函数</h2>
+
+<p>可以接受函数作为参数，也可以将函数用作返回值，这样的函数称为高阶函数。</p>
+
+<h3 id="柯里化函数与hindley-milner类型签名">柯里化函数与Hindley-Milner类型签名</h3>
+
+<p>在计算机科学中，柯里化（Currying）是把接受多个参数的函数变换成接受一个单一参数(最初函数的第一个参数)的函数，并且返回接受余下的参数且返回结果的新函数的技术。</p>
+
+<p>看一个例子：</p>
+
+<pre><code class="language-haskell">max 4 5
+--5
+f = max 4
+f 5
+--5
+</code></pre>
+
+<p>我们先看看这个函数的类型：（在GHCI中使用`:t max)</p>
+
+<pre><code class="language-haskell">max :: (Ord a) =&gt; a -&gt; a -&gt; a
+</code></pre>
+
+<p>看起来的确复杂，实际上这是一个叫Hindley-Milner类型签名的东西，Haskell主要使用这种东西来标记一个函数的类型。</p>
+
+<p>深入学习可以参考：</p>
+
+<p><a href="https://www.zybuluo.com/darwin-yuan/note/424724">Hindley-Milner类型系统(1)</a></p>
+
+<p>可以理解为这里有两个函数：</p>
+
+<p>一个使max本身，它接受一个<code>a</code> 类型参数，返回一个<code>Ord a =&gt; a -&gt; a</code> 的函数，这个新函数接受一个<code>a</code> 类型的参数，返回一个<code>a</code> 类型的参数。</p>
+
+<p>上面的声明也可以写成下面的样子：</p>
+
+<pre><code class="language-haskell">max :: (Ord a) =&gt; (a -&gt; (a -&gt; (a)))
+</code></pre>
+
+<p>这样的好处是：我们只要以部分的参数来调用某函数，就可以得到一个部分应用函数，部分应用函数所接收的参数的数量，和之前少传入的参数的数量一致。部分应用使得构造新函数快捷简便，随时可以为传递给其他函数而构造出新函数。</p>
+
+<h3 id="类型类">类型类</h3>
+
+<p>类型类（typeclass）是定义行为的接口（interface），也就是“一种类型的能力。说的简单一些，<code>typeclass</code>就要求一个类型能被放在某个函数的参数里做运算。</p>
+
+<p>有以下一些常见的<code>typeclass</code>：</p>
+
+<ul>
+<li>Eq类型类</li>
+</ul>
+
+<p>可判断相等性的类型，要求类型实现了<code>==</code>和<code>/=</code>两个函数。</p>
+
+<ul>
+<li>Ord类型类</li>
+</ul>
+
+<p>可比较大小的类型，要求类型实现了<code>compare</code>。</p>
+
+<ul>
+<li>Show类型类</li>
+</ul>
+
+<p>可以转成字符串，也就可以被显示出来的类型，实现<code>show</code>。</p>
+
+<ul>
+<li>Read类型类</li>
+</ul>
+
+<p>可以从字符转出来的类型，实现<code>read</code>。</p>
+
+<ul>
+<li>Enum类型类</li>
+</ul>
+
+<p>可以求其前驱和后继的类型，实现<code>pred</code>和<code>succ</code>。</p>
+
+<ul>
+<li>Bounded类型类</li>
+</ul>
+
+<p>有界的类型，实现<code>minBound</code>和<code>maxBound</code>。</p>
+
+<ul>
+<li>Num类型类</li>
+</ul>
+
+<p>表示数值的类型类，基本上就是<code>Int</code>、<code>Integer</code>、<code>Float</code>、<code>Double</code>。</p>
+
+<ul>
+<li>Floating类型类</li>
+</ul>
+
+<p>表示浮点数的类型类，基本上就是<code>Float</code>和<code>Double</code>。</p>
+
+<ul>
+<li>Integeral类型类</li>
+</ul>
+
+<p>表示整数的类型类，基本上就是<code>Int</code>（会溢出的整数）和<code>Integer</code>（大整数）。</p>
+
+<h2 id="玄学">玄学</h2>
+
+<p>俗话说得好，一入 FP 深似海，从此 Monad 皆是自函子范畴上的幺半群。这句话说的是什么呢，详细解释起来就是一堆玄学玩意儿。</p>
+
+<p>所以这里挖个坑，以后会补上详细的范畴和函子、自然变换以及单子的学习博客。这里先长话短说。</p>
+
+<p>什么是范畴呢，从某种意义上来讲，范畴是集合论中集合在某种概念上的推广。推广的关键就是考虑集合中的元素到另外一个元素的映射关系。</p>
+
+<p>范畴包括一类对象组成的集合，所有对象之间的态射组成的集合，任一对对象间的态射组成集合。态射可以组合起来，态射的组合操作满足结合律。每个对象都存在一个单位态射id，该态射对任意其他态射的组合都是其他态射本身。</p>
+
+<p>在 Haskell 中，对应的是：</p>
+
+<ul>
+<li>object对应着某个具体的函数</li>
+<li>态射对应着函数之间的映射，这种映射产生新的函数。比如<code>f::(a→b)→a→b</code></li>
+<li>态射的复合运算代表着函数的复合（复合函数），比如 <code>h = f . g</code></li>
+</ul>
+
+<p>如果我们把范畴看成是一个更高层的范畴的对象，两个范畴之间的态射就是函子（Functor）。</p>
+
+<h3 id="functor">Functor</h3>
+
+<p>看看函子的类型类怎样用代码表示</p>
+
+<pre><code class="language-haskell">class Functor f where
+  fmap :: (a -&gt; b) -&gt; f a -&gt; f b
+</code></pre>
+
+<p><code>Functor</code>是一个类型类，它要求实现了它的类型实现<code>fmap</code>函数。</p>
+
+<p><code>fmap</code> 函数接收两个参数，第一个参数是以<code>a</code> 为参数，<code>b</code> 为返回值的函数；第二个参数类型为<code>f a</code> ，<code>fmap</code> 的返回值类型为<code>f b</code> 。</p>
+
+<p>更通俗的讲，函子值就是可以被map-over（即通过map向对象中的子对象应用一个函数）的对象。</p>
+
+<p>可以从下面两个角度思考<code>fmap</code>: 1. 接受函数和函子值，返回在函子值上映射函数的结果（返回也是函子值）。 2. 接受函数，把该函数从操作普通类型的函数<strong>提升</strong>(lift)为操作函子值的函数。</p>
+
+<p>Haskell的列表就是一个<code>Functor</code>。</p>
+
+<pre><code class="language-haskell">map :: (a -&gt; b) -&gt; [a] -&gt; [b]
+
+instance Functor [] where
+　　fmap = map
+</code></pre>
+
+<p>Haskell中的<code>Set</code>和<code>Maybe</code>（可空值）也是<code>Functor</code>。</p>
+
+<p><code>Maybe</code> 在后面讲<code>Monad</code>的时候会用到，现在这里介绍一下：</p>
+
+<pre><code class="language-haskell">instance Functor Maybe where
+    fmap func (Just x) = Just (func x)  -- 有东西写作 Just xxx, map上去就是Just f(xxx)
+    fmap func Nothing  = Nothing		-- 没东西写作 Nothing, map上去还是Nothing
+</code></pre>
+
+<h3 id="applicative">Applicative</h3>
+
+<p><code>Applicative</code>是<code>Functor</code>的升级版本（也称<code>Applicative Functor</code>）,俗称加强版函子。先看代码：</p>
+
+<pre><code class="language-haskell">class (Functor f) =&gt; Applicative f where
+  pure :: a -&gt; f a
+  (&lt;*&gt;) :: f (a -&gt; b) -&gt; f a -&gt; f b
+</code></pre>
+
+<p><code>Applicative</code>类型类定义了两个函数：<code>pure</code>和<code>&lt;*&gt;</code>(其实还有一个<code>fmap</code> ， 因为Applicative实例肯定是<code>Functor</code>的实例，所以<code>fmap</code>免费提供了)。</p>
+
+<p><code>pure</code>是一个很简单的函数，接收任意类型的值为参数，返回包裹了该值的<code>Applicative</code>值。</p>
+
+<p><code>&lt;*&gt;</code>函数看起来和<code>fmap</code>有些像，唯一的区别是<code>fmap</code>的第一个参数接收一个普通函数<code>(a -&gt; b)</code>，而<code>&lt;*&gt;</code>的第一个参数为<code>f(a -&gt; b)</code>， 即把普通的函数用<code>Applicative</code>包裹。</p>
+
+<p>下面看以下列表作为<code>Applicative</code>实例的实现：</p>
+
+<pre><code class="language-haskell">pure x = [x]
+(&lt;*&gt;) fs xs = [f x | f &lt;- fs, x &lt;- xs]
+</code></pre>
+
+<p>总结一下，<code>Applicative</code>主要定义了两个行为，第一个行为是接收一个任意值为参数，返回一个函子值， 第二个行为是从一个函子值里取出函数，应用到第二个函子里面的值。</p>
+
+<p>网上找到的例子：</p>
+
+<pre><code class="language-haskell">[(*0), (+100), (+200)] &lt;*&gt; [1, 2, 3]
+-- 输出结果: 0,0,0,101,102,103,201,202,203
+</code></pre>
+
+<p><code>(*0)</code>是对<code>*</code>函数的部分应用，<code>*</code>是一个二元函数，接收两个参数，返回这两个参数的乘积。<code>(*0)</code>是一个一元函数，接收一个参数， 返回这个参数与0的乘积。第一个列表里面是三个一元函数，分别应用到第二个列表的元素。 这种把<code>&lt;*&gt;</code>串起来用的用法叫做Applicative风格。</p>
+
+<h3 id="monad">Monad</h3>
+
+<p>终于出现前文提到的自函子范畴上的一个幺半群了。</p>
+
+<p>相比Functor和Applicative，Monad的应用更加广泛，Monad可以看作加强版的Applicative。上代码：</p>
+
+<pre><code class="language-haskell">class Applicative m =&gt; Monad m where    
+	return :: a -&gt; m a     
+	(&gt;&gt;=) :: m a -&gt; (a -&gt; m b) -&gt; m b
+</code></pre>
+
+<p>Monad相对于普通函子多出来的约束就是多了两个自然变换(return, bind)，这两个函数满足以下公理：</p>
+
+<ul>
+<li><code>return</code> 与 <code>&gt;&gt;=</code> 互为逆操作</li>
+</ul>
+
+<pre><code>  (return x) &gt;&gt;= f == f x
+  m &gt;&gt;= return == m
+</code></pre>
+
+<ul>
+<li><code>&gt;&gt;=</code> 满足结合律</li>
+</ul>
+
+<pre><code>  (m &gt;&gt;= f) &gt;&gt;= g == m &gt;&gt;= (\x -&gt; (f x &gt;&gt;= g))
+</code></pre>
+
+<p>前面说的Maybe就是一个Monad:</p>
+
+<pre><code class="language-haskell">class Applicative Maybe =&gt; Monad Maybe where
+    return :: a -&gt; Maybe a
+    (&gt;&gt;=) :: Maybe a -&gt; (a -&gt; Maybe b) -&gt; Maybe b
+</code></pre>
+
+<pre><code class="language-haskell">half x = if even x
+    then Just (x `div` 2)
+    else Nothing
+</code></pre>
+
+<pre><code class="language-haskell">Prelude&gt; Just 20 &gt;&gt;= half						-- 把Just 20塞进half函数里
+Just 10
+Prelude&gt; Just 20 &gt;&gt;= half &gt;&gt;= half				-- 把Just 20的结果塞进half函数里
+Just 5
+Prelude&gt; Just 20 &gt;&gt;= half &gt;&gt;= half &gt;&gt;= half
+Nothing
+</code></pre>
+
+<p>Monad接受一个上下文中的值和一个(接受普通值返回上下文中的值)的函数，返回一个上下文中的值。</p>
+
+<p>纯函数的优点是安全可靠。函数输出完全取决于输入，不存在任何隐式依赖。它的存在如同数学公式般完美无缺。但是因为隔绝了外部环境，纯函数连基本的输入输出都做不了。</p>
+
+<p>以IO Monad为例子。Monad 将带有副作用的 IO 操作以一种可控的方式引入到 Haskell 中，让纯函数与 IO 操作能够和平相处，共同组织出既安全又有用的程序。</p>
+
+<p><code>return</code> 的作用是将某个类型为 A 的值 a 以最自然的方式提升（装箱）为类型为 IO A 的值 <code>Char -&gt; IO Char</code> 。有了这个函数后，纯函数就可以通过与 <code>return</code> 复合变成返回值为 <code>IO</code> 带副作用的函数了，当然，实际的 IO 动作是 Haskell 内建的，<code>return</code> 的主要意义在于类型提升。</p>
+
+<p>有了提升可没有下降操作，怎么复合 <code>putChar :: Char -&gt; IO()</code> 与 <code>getChar :: IO Char</code> 呢。 <code>getChar</code> 从 IO 读取一个字符， <code>putChar</code> 把字符写入 IO。但 <code>getChar</code> 返回的是 <code>IO Char</code> 类型，而 <code>putChar</code> 需要的是普通的 <code>Char</code> 类型，两者不匹配怎么办？ <code>&gt;&gt;=</code> 函数出马了！ <code>&gt;&gt;=</code> 的类型是</p>
+
+<pre><code>IO a -&gt; (a -&gt; IO b) -&gt; IO b
+</code></pre>
+
+<p>这样 <code>&gt;&gt;=</code> 就可以连接 <code>getChar</code> 与 <code>putChar</code> ，把输入复写到输出中</p>
+
+<pre><code>echo = (getChar &gt;&gt;= putChar)
+</code></pre>
+
+<p>可以看到 <code>&gt;&gt;=</code> 操作实际上是受限的类型下降（或拆箱）操作，只有当后面的函数返回值也是 IO 类型时才进行下降操作。这样既充分隔离纯函数与副作用函数，又能让函数相互复用。</p>
+
+<p>//写不动了，先写这些吧</p>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://arbusz.github.io/tags/haskell/">Haskell</a>
+
+  <a class="tag tag--primary tag--small" href="https://arbusz.github.io/tags/fp/">FP</a>
+
+                  </div>
+                
+              
+            
+            
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/10/go-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/" data-tooltip="Go 超时处理">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://arbusz.github.io/2018/12/haskell%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%88%9D%E6%8E%A2/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://arbusz.github.io/2018/12/haskell%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%88%9D%E6%8E%A2/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://arbusz.github.io/2018/12/haskell%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%88%9D%E6%8E%A2/">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2018 Arbus. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/10/go-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/" data-tooltip="Go 超时处理">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://arbusz.github.io/2018/12/haskell%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%88%9D%E6%8E%A2/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://arbusz.github.io/2018/12/haskell%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%88%9D%E6%8E%A2/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://arbusz.github.io/2018/12/haskell%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%88%9D%E6%8E%A2/">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Farbusz.github.io%2F2018%2F12%2Fhaskell%25E5%2587%25BD%25E6%2595%25B0%25E5%25BC%258F%25E7%25BC%2596%25E7%25A8%258B%25E5%2588%259D%25E6%258E%25A2%2F">
+          <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Farbusz.github.io%2F2018%2F12%2Fhaskell%25E5%2587%25BD%25E6%2595%25B0%25E5%25BC%258F%25E7%25BC%2596%25E7%25A8%258B%25E5%2588%259D%25E6%258E%25A2%2F">
+          <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https%3A%2F%2Farbusz.github.io%2F2018%2F12%2Fhaskell%25E5%2587%25BD%25E6%2595%25B0%25E5%25BC%258F%25E7%25BC%2596%25E7%25A8%258B%25E5%2588%259D%25E6%258E%25A2%2F">
+          <i class="fa fa-google-plus"></i><span>Share on Google&#43;</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="//www.gravatar.com/avatar/7c65f43625271645a726047600797446?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Arbus</h4>
+    
+      <div id="about-card-bio">A student from DLUT.</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Screw Studio
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        China
+      </div>
+    
+  </div>
+</div>
+
+    <div id="algolia-search-modal" class="modal-container">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="close-button"><i class="fa fa-close"></i></span>
+      <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+        <span class="searchby-algolia-text text-color-light text-small">by</span>
+        <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+      </a>
+      <i class="search-icon fa fa-search"></i>
+      <form id="algolia-search-form">
+        <input type="text" id="algolia-search-input" name="search"
+          class="form-control input--large search-input" placeholder="Search" />
+      </form>
+    </div>
+    <div class="modal-body">
+      <div class="no-result text-color-light text-center">no post found</div>
+      <div class="results">
+        
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/12/haskell%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%88%9D%E6%8E%A2/">
+                <h3 class="media-heading">Haskell函数式编程初探</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/10/go-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/">
+                <h3 class="media-heading">Go 超时处理</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Oct 10, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/10/nmap%E6%80%BB%E7%BB%93/">
+                <h3 class="media-heading">Nmap总结</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Oct 10, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/10/raft%E5%8D%8F%E8%AE%AE/">
+                <h3 class="media-heading">Raft协议</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Oct 10, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/10/%E9%A9%AC%E6%8B%89%E8%BD%A6%E7%AE%97%E6%B3%95/">
+                <h3 class="media-heading">马拉车算法</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Oct 10, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/09/vim%E7%9A%84go%E8%AF%AD%E8%A8%80%E9%85%8D%E7%BD%AE/">
+                <h3 class="media-heading">Vim的go语言配置</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/09/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AEraft/">
+                <h3 class="media-heading">分布式协议　Raft</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/09/%E4%B8%A4%E7%A7%8D%E4%B8%BB%E6%B5%81%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/">
+                <h3 class="media-heading">两种主流并发模型</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
+                <h3 class="media-heading">一个遍历目录的小程序</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/">
+                <h3 class="media-heading">包含nil指针的接口和nil接口</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+      </div>
+    </div>
+    <div class="modal-footer">
+      <p class="results-count text-medium"
+         data-message-zero="no post found"
+         data-message-one="1 post found"
+         data-message-other="{n} posts found">
+         14 posts found
+      </p>
+    </div>
+  </div>
+</div>
+    
+  
+    
+    <div id="cover" style="background-image:url('https://arbusz.github.io/images/cover.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://arbusz.github.io/js/script-qi9wbxp2ya2j6p7wx1i6tgavftewndznf4v0hy2gvivk1rxgc3lm7njqb6bz.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/arbusz.github.io\/2018\/12\/haskell%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%88%9D%E6%8E%A2\/';
+          
+            this.page.identifier = '\/2018\/12\/haskell%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%88%9D%E6%8E%A2\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'hugo-tranquilpeak-theme';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+    
+  </body>
+</html>
+
