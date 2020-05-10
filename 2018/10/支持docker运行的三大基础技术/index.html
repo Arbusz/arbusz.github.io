@@ -1,0 +1,1196 @@
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+  
+
+
+  
+
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.40.1 with theme Tranquilpeak 0.4.3-BETA">
+    <title>支持Docker运行的三大基础技术</title>
+    <meta name="author" content="Arbus">
+    <meta name="keywords" content="Docker">
+
+    <link rel="icon" href="https://arbusz.github.io/favicon.png">
+    
+
+    
+    <meta name="description" content="">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="支持Docker运行的三大基础技术">
+    <meta property="og:url" content="/2018/10/%E6%94%AF%E6%8C%81docker%E8%BF%90%E8%A1%8C%E7%9A%84%E4%B8%89%E5%A4%A7%E5%9F%BA%E7%A1%80%E6%8A%80%E6%9C%AF/">
+    <meta property="og:site_name" content="Arbus&#39;s Little Site">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Arbus&#39;s Little Site">
+    <meta name="twitter:description" content="">
+    
+    
+
+    
+    
+
+    
+      <meta property="og:image" content="//www.gravatar.com/avatar/7c65f43625271645a726047600797446?s=640">
+    
+
+    
+    
+    
+
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://arbusz.github.io/css/style-jsjn0006wyhpyzivf6yceb31gvpjatbcs3qzjvlumobfnugccvobqwxnnaj8.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://arbusz.github.io/">Arbus&#39;s Little Site</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://arbusz.github.io/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="//www.gravatar.com/avatar/7c65f43625271645a726047600797446?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://arbusz.github.io/#about">
+          <img class="sidebar-profile-picture" src="//www.gravatar.com/avatar/7c65f43625271645a726047600797446?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Arbus</h4>
+        
+          <h5 class="sidebar-profile-bio">A student from DLUT.</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E5%87%BD%E6%95%B0/">
+    
+      
+      
+      <span class="sidebar-button-desc">Go语言笔记－函数</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/03/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E7%B1%BB%E5%9E%8B/">
+    
+      
+      
+      <span class="sidebar-button-desc">Go语言笔记－类型</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/05/go%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+    
+      
+      
+      <span class="sidebar-button-desc">Go语言笔记－表达式</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/09/vim%E7%9A%84go%E8%AF%AD%E8%A8%80%E9%85%8D%E7%BD%AE/">
+    
+      
+      
+      <span class="sidebar-button-desc">Vim的go语言配置</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/09/%E4%B8%A4%E7%A7%8D%E4%B8%BB%E6%B5%81%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/">
+    
+      
+      
+      <span class="sidebar-button-desc">两种主流并发模型</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/09/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AEraft/">
+    
+      
+      
+      <span class="sidebar-button-desc">分布式协议　Raft</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/">
+    
+      
+      
+      <span class="sidebar-button-desc">包含nil指针的接口和nil接口</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/Arbusz" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://arbusz.github.io/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      支持Docker运行的三大基础技术
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-10-24T22:35:30&#43;08:00">
+        
+  
+  
+  
+  
+    24 October 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://arbusz.github.io/categories/docker">Docker</a>, 
+    
+      <a class="category-link" href="https://arbusz.github.io/categories/subcategory">subcategory</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p></p>
+
+<h1 id="支持docker运行的三大基础技术">支持Docker运行的三大基础技术</h1>
+
+<ul>
+<li>Linux Namespace</li>
+<li>Linux Cgroups</li>
+<li>Union File System</li>
+</ul>
+
+<h1 id="linux-namespace">Linux Namespace</h1>
+
+<p>这是Kernel的一个功能，可以用来隔离一系列的系统资源，比如PID、User ID、Network等。</p>
+
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>系统调用参数</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>Mount namespaces</strong></td>
+<td>CLONE_NEWNS</td>
+</tr>
+
+<tr>
+<td><strong>UTS namespaces</strong></td>
+<td>CLONE_NEWUTS</td>
+</tr>
+
+<tr>
+<td><strong>IPC namespaces</strong></td>
+<td>CLONE_NEWIPC</td>
+</tr>
+
+<tr>
+<td><strong>PID namespaces</strong></td>
+<td>CLONE_NEWPID</td>
+</tr>
+
+<tr>
+<td><strong>Network namespaces</strong></td>
+<td>CLONE_NEWNET</td>
+</tr>
+
+<tr>
+<td><strong>User namespaces</strong></td>
+<td>CLONE_NEWUSER</td>
+</tr>
+</tbody>
+</table>
+
+<p>主要的三种系统调用方式</p>
+
+<ul>
+<li><strong>clone</strong>()– 实现线程的系统调用，用来创建一个新的进程，并可以通过设计上述参数达到隔离。</li>
+<li><strong>unshare</strong>() – 使某进程脱离某个namespace</li>
+<li><strong>setns</strong>()– 把某进程加入到某个namespace</li>
+</ul>
+
+<p>以下将通过Clone调用分别介绍各个Namespace启用后的效果（本来代码实现是用的Go，目的是实现一个简化版的Docker。但是大家没学过，所以我去博客上找了C的代码）</p>
+
+<p>原始程序</p>
+
+<pre><code class="language-c">#define _GNU_SOURCE
+#include &lt;sys/types.h&gt;
+#include &lt;sys/wait.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;sched.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;unistd.h&gt;
+ 
+/* 定义一个给 clone 用的栈，栈大小1M */
+#define STACK_SIZE (1024 * 1024)
+static char container_stack[STACK_SIZE];
+ 
+char* const container_args[] = {
+    &quot;/bin/bash&quot;,
+    NULL
+};
+ 
+int container_main(void* arg)
+{
+    printf(&quot;Container - inside the container!\n&quot;);
+    /* 直接执行一个shell，以便我们观察这个进程空间里的资源是否被隔离了 */
+    execv(container_args[0], container_args); 
+    printf(&quot;Something's wrong!\n&quot;);
+    return 1;
+}
+ 
+int main()
+{
+    printf(&quot;Parent - start a container!\n&quot;);
+    /* 调用clone函数，其中传出一个函数，还有一个栈空间的（为什么传尾指针，因为栈是反着的） */
+    int container_pid = clone(container_main, container_stack+STACK_SIZE, SIGCHLD, NULL);
+    /* 等待子进程结束 */
+    waitpid(container_pid, NULL, 0);
+    printf(&quot;Parent - container stopped!\n&quot;);
+    return 0;
+}
+</code></pre>
+
+<h1 id="ust-namespaces">UST Namespaces</h1>
+
+<p>提供了主机名和域名的隔离，这样每个容器就拥有独立的主机名和域名了，在网络上就可以被视为一个独立的节点，在容器中对 hostname 的命名不会对宿主机造成任何影响。</p>
+
+<p>修改代码</p>
+
+<pre><code class="language-c">int container_main(void* arg)
+{
+    printf(&quot;Container - inside the container!\n&quot;);
+    sethostname(&quot;container&quot;,10); /* 设置hostname */
+    execv(container_args[0], container_args);
+    printf(&quot;Something's wrong!\n&quot;);
+    return 1;
+}
+ 
+int main()
+{
+    printf(&quot;Parent - start a container!\n&quot;);
+    int container_pid = clone(container_main, container_stack+STACK_SIZE, 
+            CLONE_NEWUTS | SIGCHLD, NULL); /*启用CLONE_NEWUTS Namespace隔离 */
+    waitpid(container_pid, NULL, 0);
+    printf(&quot;Parent - container stopped!\n&quot;);
+    return 0;
+}
+</code></pre>
+
+<p>效果如下：</p>
+
+<pre><code class="language-shell">arbus@ubuntu:~$ sudo ./uts
+Parent - start a container!
+Container - inside the container!
+root@container:~# hostname
+container
+root@container:~# uname -n
+container
+</code></pre>
+
+<h1 id="ipc-namespcace">IPC Namespcace</h1>
+
+<p>IPC全称 Inter-Process Communication，是Unix/Linux下进程间通信的一种方式，IPC有共享内存、信号量、消息队列等方法。所以，为了隔离，我们也需要把IPC给隔离开来，这样，只有在同一个Namespace下的进程才能相互通信。一组IPC有一个全局的ID，我们的目的是隔离这个ID。</p>
+
+<p>首先创建IPC队列</p>
+
+<pre><code class="language-shell">arbus@ubuntu:~$ ipcmk -Q 
+Message queue id: 0
+ 
+arbus@ubuntu:~$ ipcs -q
+------ Message Queues --------
+key        msqid      owner      perms      used-bytes   messages    
+0xd0d56eb2 0          arbus      644        0            0
+</code></pre>
+
+<p>如果没有隔离，在container中，还会看到这个全局ID</p>
+
+<pre><code class="language-shell">arbus@ubuntu:~$ sudo ./uts
+Parent - start a container!
+Container - inside the container!
+ 
+root@container:~# ipcs -q
+ 
+------ Message Queues --------
+key        msqid      owner      perms      used-bytes   messages    
+0xd0d56eb2 0          arbus      644        0            0
+</code></pre>
+
+<p>修改代码：</p>
+
+<pre><code class="language-c">int container_pid = clone(container_main, container_stack+STACK_SIZE, 
+            CLONE_NEWUTS | CLONE_NEWIPC | SIGCHLD, NULL);
+</code></pre>
+
+<p>再次运行程序</p>
+
+<pre><code class="language-shell">root@ubuntu:~$ sudo./ipc
+Parent - start a container!
+Container - inside the container!
+ 
+root@container:~/linux_namespace# ipcs -q
+ 
+------ Message Queues --------
+key        msqid      owner      perms      used-bytes   messages
+</code></pre>
+
+<h1 id="pid-namespace">PID Namespace</h1>
+
+<p>用来隔离进程ID。同一个进程在不同的PID Namespace中可以拥有不同的PID。使用后，在container内外查看进程，会发现容器外的进程ID号被映射成其他ID号。</p>
+
+<pre><code class="language-shell">├─sshd(23448)─┬─sshd(30442)───zsh(30444)───go(31498)─┬─main(31519)─┬─sh(31522)
+           │             │                                      │             ├─{main}(31520)
+           │             │                                      │             └─{main}(31521)
+           │             │                                      ├─{go}(31499)
+           │             │                                      ├─{go}(31500)
+           │             │                                      ├─{go}(31501)
+           │             │                                      ├─{go}(31502)
+           │             │                                      ├─{go}(31515)
+           │             │                                      └─{go}(31523)
+           │             ├─sshd(30870)───zsh(30872)
+           │             └─sshd(30932)───zsh(30934)───pstree(31534)
+           ├─systemd-journal(325)
+           ├─systemd-logind(475)
+           ├─systemd-udevd(29645)
+           ├─tmux: server(25827)─┬─zsh(25828)
+           │                     ├─zsh(25917)
+           │                     ├─zsh(25952)
+           │                     └─zsh(26185)
+           └─tuned(19273)─┬─{tuned}(19279)
+                          ├─{tuned}(19280)
+                          ├─{tuned}(19281)
+                          └─{tuned}(19309)
+</code></pre>
+
+<p>增加PID Namespace后，在容器内执行<code>echo $$</code>(当前Shell进程ID。对于 Shell 脚本，就是这些脚本所在的进程ID)。</p>
+
+<pre><code class="language-shell">sh-4.2# echo $$
+1
+</code></pre>
+
+<p>（PID为1的进程又叫超级进程，也叫根进程。它负责产生其他所有用户进程。所有的进程都会被挂在这个进程下，如果这个进程退出了，那么所有的进程都被 kill 。）</p>
+
+<p>但是，在子进程的shell里输入ps,top等命令，我们还是可以看得到所有进程。说明并没有完全隔离。这是因为，像ps, top这些命令会去读/proc文件系统，所以，因为/proc文件系统在父进程和子进程都是一样的，所以这些命令显示的东西都是一样的。</p>
+
+<h1 id="mount-namespace">Mount Namespace</h1>
+
+<p>Mount Namespace用来隔离各个进程上看到的挂载点视图，从而达到对文件系统的隔离。也就是说，在不同的Namespace中看到的文件系统是不一样的。</p>
+
+<p>示例：启用mount namespace并在子进程中重新mount /proc文件系统。</p>
+
+<pre><code class="language-shell">➜  ~ ls /proc
+1      15825  19087  227    2528   26     30872  39   59    9815       bus        driver       kallsyms    mdstat        sched_debug  sysrq-trigger  zoneinfo
+10     16     19160  230    2529   26185  30932  390  6035  9817       cgroups    execdomains  kcore       meminfo       schedstat    sysvipc
+104    16931  19226  233    2542   26881  30934  397  7     9818       cmdline    fb           keys        misc          scsi         timer_list
+12     17     19273  23448  255    28     31498  40   7662  9819       consoles   filesystems  key-users   modules       self         timer_stats
+13     18     19453  235    256    29645  31519  435  794   9820       cpuinfo    fs           kmsg        mounts        slabinfo     tty
+14     18827  19456  237    25827  3      31522  469  796   9821       crypto     interrupts   kpagecount  mtrr          softirqs     uptime
+15     18854  2      243    25828  30442  325    470  8     9875       devices    iomem        kpageflags  net           stat         version
+15819  19     22276  25     25917  30444  36     475  9     acpi       diskstats  ioports      loadavg     pagetypeinfo  swaps        vmallocinfo
+15824  19016  22373  250    25952  30870  38     5    9812  buddyinfo  dma        irq          locks       partitions    sys          vmstat
+
+</code></pre>
+
+<p>增加CLONE_NEWNS参数。</p>
+
+<pre><code class="language-shell">sh-4.2# ls /proc
+1	   cgroups   devices	  fb	       ioports	 key-users   locks    mounts	    sched_debug  softirqs	sysvipc      version
+4	   cmdline   diskstats	  filesystems  irq	 kmsg	     mdstat   mtrr	    schedstat	 stat		timer_list   vmallocinfo
+acpi	   consoles  dma	  fs	       kallsyms  kpagecount  meminfo  net	    scsi	 swaps		timer_stats  vmstat
+buddyinfo  cpuinfo   driver	  interrupts   kcore	 kpageflags  misc     pagetypeinfo  self	 sys		tty	     zoneinfo
+bus	   crypto    execdomains  iomem        keys	 loadavg     modules  partitions    slabinfo	 sysrq-trigger	uptime
+
+</code></pre>
+
+<h1 id="user-namespace">User Namespace</h1>
+
+<p>User Namespace主要是隔离用户的用户组ID，也就是说，一个进程所属User ID在不同User Namespace中可以不同。比较常见的是，在宿主机上一个普通用户创建一个User Namespace，在其中映射成Root用户。这样做可以很好的限制权限。</p>
+
+<p>（代码略长，主要操作也是加入系统调用参数）</p>
+
+<p>加入前：</p>
+
+<pre><code class="language-shell">arbus@ubuntu:~$ id
+uid=1000(arbus) gid=1000(arbus) groups=1000(arbus)
+</code></pre>
+
+<p>加入后</p>
+
+<pre><code class="language-shell">root@container:~# id #&lt;----我们可以看到容器里的用户和命令行提示符是root用户了
+uid=0(root) gid=0(root) groups=0(root),65534(nogroup)
+</code></pre>
+
+<p>虽然容器里是root，但其实这个容器的/bin/bash进程是以一个普通用户来运行的。这样一来，我们容器的安全性会得到提高。</p>
+
+<h1 id="network-namespace">Network Namespace</h1>
+
+<p>Network namespace 实现了网络资源的隔离，包括网络设备、IPv4 和 IPv6 协议栈，IP 路由表，防火墙，/proc/net 目录，/sys/class/net 目录，套接字等。</p>
+
+<p>Network namespace可以让每个容器都拥有独立的虚拟 网络设备，容器内的应用可以绑定到自己的端口而不会与其他Network namespace冲突。只要在宿主机上搭建网桥，就可以方便的通信。</p>
+
+<p>（例子略）</p>
+
+<h1 id="linux-cgroup">Linux Cgroup</h1>
+
+<p>Linux Cgroup全称Linux Control Group，它提供了对一组进程及将来子进程的资源限制、控制和统计能力，这些资源包括CPU、内存、储存、网络等。通过这个功能，可以方便的限制资源的占用、并且可以实时监控。</p>
+
+<p>三个组件：</p>
+
+<ul>
+<li>cgroup: 一组按照某种标准划分的进程。Cgroups中的资源控制都是以控制组为单位实现。一个进程可以加入到某个控制组。</li>
+<li>subsystem: 一个子系统就是一个资源控制器。子系统必须附加到一个层级上才能起作用，一个子系统附加到某个层级以后，这个层级上的所有控制族群都受到这个子系统的控制</li>
+<li>hierarchy: 把一组cgroup串成一个树状结构。通过这种结构，cgroup可以实现继承，控制组树上的子节点继承父结点的属性。</li>
+</ul>
+
+<p>例子：</p>
+
+<p>有一个很占用内存的demo：</p>
+
+<pre><code class="language-c">int main(void)
+{
+    int i = 0;
+    for(;;) i++;
+    return 0;
+}
+</code></pre>
+
+<p>以超级用户权限执行，查看一下资源占用：</p>
+
+<pre><code class="language-shell">PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND     
+3529 root      20   0    4196    736    656 R 99.6  0.1   0:23.13 demo
+</code></pre>
+
+<p>首先在/sys/fs/cgroup/cpu下创建了一个haoel的group。设置一下这个group的cpu利用的限制：</p>
+
+<pre><code class="language-shell">arbus@ubuntu:~# cat /sys/fs/cgroup/cpu/haoel/cpu.cfs_quota_us 
+-1
+root@ubuntu:~# echo 20000 &gt; /sys/fs/cgroup/cpu/haoel/cpu.cfs_quota_us
+</code></pre>
+
+<p>这个进程的PID是3529，我们把这个进程加到这个cgroup中：</p>
+
+<pre><code class="language-shell"># echo 3529 &gt;&gt; /sys/fs/cgroup/cpu/haoel/tasks
+</code></pre>
+
+<p>重新查看,发现已经降至19.9：</p>
+
+<pre><code class="language-shell">PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND     
+3529 root      20   0    4196    736    656 R 19.9  0.1   8:06.11 demo
+</code></pre>
+
+<h1 id="aufs">AUFS</h1>
+
+<p>先介绍一下什么是UnionFS。它是为类Unix系统设计的，把其他文件系统联合到一个联合挂载点的文件系统服务。</p>
+
+<p>Branch – 就是各个要被union起来的目录。Branch根据被union的顺序形成一个stack，一般来说最上面的是可写的，下面的都是只读的。当对这个虚拟后的联合文件系统进行写操作的时候，系统是真正写到了一个新的文件中。看起来这个虚拟后的联合文件系统是可以对任何文件进行操作的，但是其实它并没有改变原来的文件，这是因为 unionfs用到了一个重要的资源管理技术，叫写时复制。</p>
+
+<p>写时复制（copy-on&ndash;Write，下文简称CoW）也叫隐式共享，是一种对可修改资源实现高效复制的资源管理技术。它的思想是，如果一个资源是重复的，但没有任何修改，这时并不需要立即创建一个新的资源，这个资源可以被新旧实例共享。创建新资源发生在第一次写操作，也就是对资源进行修改的时候。通过这种资源共享的方式，可以显著地减少未修改资源复制带来的消耗，但是也会在进行资源修改时增加小部分的开销。</p>
+
+<p>AUFS有所有Union FS的特性，支持将不同目录挂载到同一个虚拟文件系统下的文件系统。这种文件系统可以一层一层地叠加修改文件。无论底下有多少层都是只读的，只有最上层的文件系统是可写的。当需要修改一个文件时，AUFS创建该文件的一个副本，使用CoW将文件从只读层复制到可写层进行修改，结果也保存在可写层。</p>
+
+<pre><code class="language-shell">$ tree
+.
+├── fruits
+│   ├── apple
+│   └── tomato
+└── vegetables
+    ├── carrots
+    └── tomato
+# 创建一个mount目录
+$ mkdir mnt
+ 
+# 把水果目录和蔬菜目录union mount到 ./mnt目录中
+$ sudo mount -t aufs -o dirs=./fruits:./vegetables none ./mnt
+ 
+#  查看./mnt目录
+$ tree ./mnt
+./mnt
+├── apple
+├── carrots
+└── tomato
+
+# 修改
+$ echo mnt &gt; ./mnt/apple
+$ cat ./mnt/apple
+mnt
+$ cat ./fruits/apple
+mnt 
+
+# 再次修改
+$ echo mnt_carrots &gt; ./mnt/carrots
+$ cat ./vegetables/carrots
+ 
+$ cat ./fruits/carrots
+mnt_carrots
+</code></pre>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://arbusz.github.io/tags/docker/">Docker</a>
+
+  <a class="tag tag--primary tag--small" href="https://arbusz.github.io/tags/namespace/">Namespace</a>
+
+  <a class="tag tag--primary tag--small" href="https://arbusz.github.io/tags/cgroups/">Cgroups</a>
+
+  <a class="tag tag--primary tag--small" href="https://arbusz.github.io/tags/ufs/">UFS</a>
+
+                  </div>
+                
+              
+            
+            
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/12/haskell%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%88%9D%E6%8E%A2/" data-tooltip="Haskell函数式编程初探">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/10/go-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/" data-tooltip="Go 超时处理">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://arbusz.github.io/2018/10/%E6%94%AF%E6%8C%81docker%E8%BF%90%E8%A1%8C%E7%9A%84%E4%B8%89%E5%A4%A7%E5%9F%BA%E7%A1%80%E6%8A%80%E6%9C%AF/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://arbusz.github.io/2018/10/%E6%94%AF%E6%8C%81docker%E8%BF%90%E8%A1%8C%E7%9A%84%E4%B8%89%E5%A4%A7%E5%9F%BA%E7%A1%80%E6%8A%80%E6%9C%AF/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://arbusz.github.io/2018/10/%E6%94%AF%E6%8C%81docker%E8%BF%90%E8%A1%8C%E7%9A%84%E4%B8%89%E5%A4%A7%E5%9F%BA%E7%A1%80%E6%8A%80%E6%9C%AF/">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2020 Arbus. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/12/haskell%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%88%9D%E6%8E%A2/" data-tooltip="Haskell函数式编程初探">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://arbusz.github.io/2018/10/go-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/" data-tooltip="Go 超时处理">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://arbusz.github.io/2018/10/%E6%94%AF%E6%8C%81docker%E8%BF%90%E8%A1%8C%E7%9A%84%E4%B8%89%E5%A4%A7%E5%9F%BA%E7%A1%80%E6%8A%80%E6%9C%AF/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://arbusz.github.io/2018/10/%E6%94%AF%E6%8C%81docker%E8%BF%90%E8%A1%8C%E7%9A%84%E4%B8%89%E5%A4%A7%E5%9F%BA%E7%A1%80%E6%8A%80%E6%9C%AF/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://arbusz.github.io/2018/10/%E6%94%AF%E6%8C%81docker%E8%BF%90%E8%A1%8C%E7%9A%84%E4%B8%89%E5%A4%A7%E5%9F%BA%E7%A1%80%E6%8A%80%E6%9C%AF/">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Farbusz.github.io%2F2018%2F10%2F%25E6%2594%25AF%25E6%258C%2581docker%25E8%25BF%2590%25E8%25A1%258C%25E7%259A%2584%25E4%25B8%2589%25E5%25A4%25A7%25E5%259F%25BA%25E7%25A1%2580%25E6%258A%2580%25E6%259C%25AF%2F">
+          <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Farbusz.github.io%2F2018%2F10%2F%25E6%2594%25AF%25E6%258C%2581docker%25E8%25BF%2590%25E8%25A1%258C%25E7%259A%2584%25E4%25B8%2589%25E5%25A4%25A7%25E5%259F%25BA%25E7%25A1%2580%25E6%258A%2580%25E6%259C%25AF%2F">
+          <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https%3A%2F%2Farbusz.github.io%2F2018%2F10%2F%25E6%2594%25AF%25E6%258C%2581docker%25E8%25BF%2590%25E8%25A1%258C%25E7%259A%2584%25E4%25B8%2589%25E5%25A4%25A7%25E5%259F%25BA%25E7%25A1%2580%25E6%258A%2580%25E6%259C%25AF%2F">
+          <i class="fa fa-google-plus"></i><span>Share on Google&#43;</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="//www.gravatar.com/avatar/7c65f43625271645a726047600797446?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Arbus</h4>
+    
+      <div id="about-card-bio">A student from DLUT.</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Screw Studio
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        China
+      </div>
+    
+  </div>
+</div>
+
+    <div id="algolia-search-modal" class="modal-container">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="close-button"><i class="fa fa-close"></i></span>
+      <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+        <span class="searchby-algolia-text text-color-light text-small">by</span>
+        <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+      </a>
+      <i class="search-icon fa fa-search"></i>
+      <form id="algolia-search-form">
+        <input type="text" id="algolia-search-input" name="search"
+          class="form-control input--large search-input" placeholder="Search" />
+      </form>
+    </div>
+    <div class="modal-body">
+      <div class="no-result text-color-light text-center">no post found</div>
+      <div class="results">
+        
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/05/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8E%9F%E7%90%86/">
+                <h3 class="media-heading">分布式原理</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2020
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/04/golang%E7%9A%84gc%E7%AE%97%E6%B3%95/">
+                <h3 class="media-heading">Golang的GC算法</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2020
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/04/%E6%A0%87%E8%AE%B0%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95/">
+                <h3 class="media-heading">标记清除算法</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2020
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/03/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E9%97%AE%E9%A2%98/">
+                <h3 class="media-heading">滑动窗口问题</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2020
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/03/%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E7%AE%97%E6%B3%95/">
+                <h3 class="media-heading">引用计数算法</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2020
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/03/%E5%A4%8D%E5%88%B6%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95/">
+                <h3 class="media-heading">复制收集算法</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2020
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/02/gc%E7%AE%97%E6%B3%95%E8%AF%84%E4%BB%B7%E6%A0%87%E5%87%86/">
+                <h3 class="media-heading">GC算法评价标准</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2020
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/02/gc%E5%8F%AF%E8%BE%BE%E5%88%86%E6%9E%90/">
+                <h3 class="media-heading">GC可达分析</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2020
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/02/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/">
+                <h3 class="media-heading">快慢指针</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2020
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://arbusz.github.io/2019/04/docker%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/">
+                <h3 class="media-heading">Docker架构简介</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p></p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+      </div>
+    </div>
+    <div class="modal-footer">
+      <p class="results-count text-medium"
+         data-message-zero="no post found"
+         data-message-one="1 post found"
+         data-message-other="{n} posts found">
+         29 posts found
+      </p>
+    </div>
+  </div>
+</div>
+    
+  
+    
+    <div id="cover" style="background-image:url('https://arbusz.github.io/images/cover.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://arbusz.github.io/js/script-qi9wbxp2ya2j6p7wx1i6tgavftewndznf4v0hy2gvivk1rxgc3lm7njqb6bz.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/arbusz.github.io\/2018\/10\/%E6%94%AF%E6%8C%81docker%E8%BF%90%E8%A1%8C%E7%9A%84%E4%B8%89%E5%A4%A7%E5%9F%BA%E7%A1%80%E6%8A%80%E6%9C%AF\/';
+          
+            this.page.identifier = '\/2018\/10\/%E6%94%AF%E6%8C%81docker%E8%BF%90%E8%A1%8C%E7%9A%84%E4%B8%89%E5%A4%A7%E5%9F%BA%E7%A1%80%E6%8A%80%E6%9C%AF\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'hugo-tranquilpeak-theme';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+    
+  </body>
+</html>
+

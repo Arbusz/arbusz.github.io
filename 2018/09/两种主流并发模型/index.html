@@ -347,6 +347,15 @@
 </ul>
 
 <p>想深入了解可以阅读<a href="http://jolestar.com/parallel-programming-model-thread-goroutine-actor/">并发之痛 Thread，Goroutine，Actor</a></p>
+
+<h3 id="题外话-rust对并发的解决方案">题外话：Rust对并发的解决方案</h3>
+
+<p>Rust解决并发问题的思路是首先承认现实世界的资源总是有限的，想彻底避免资源共享是很难的，不试图完全避免资源共享，它认为并发的问题不在于资源共享，而在于错误的使用资源共享。</p>
+
+<ul>
+<li>定义类型的时候要明确指定该类型是否是并发安全的</li>
+<li>引入了变量的所有权（Ownership）概念 非并发安全的数据结构在多个线程间转移，也不一定就会导致问题，导致问题的是多个线程同时操作，也就是说是因为这个变量的所有权不明确导致的。有了所有权的概念后，变量只能由拥有所有权的作用域代码操作，而变量传递会导致所有权变更，从语言层面限制了竞态条件出现的情况。</li>
+</ul>
               
             </div>
           </div>
@@ -446,7 +455,7 @@
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2018 Arbus. All Rights Reserved
+    &copy; 2020 Arbus. All Rights Reserved
   </span>
 </footer>
 
@@ -600,12 +609,12 @@
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://arbusz.github.io/2018/12/haskell%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%88%9D%E6%8E%A2/">
-                <h3 class="media-heading">Haskell函数式编程初探</h3>
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/05/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8E%9F%E7%90%86/">
+                <h3 class="media-heading">分布式原理</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Dec 12, 2018
+                  May 5, 2020
                 </span>
               </span>
               <div class="media-content hide-xs font-merryweather"><p></p></div>
@@ -617,12 +626,12 @@
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://arbusz.github.io/2018/10/go-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/">
-                <h3 class="media-heading">Go 超时处理</h3>
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/04/golang%E7%9A%84gc%E7%AE%97%E6%B3%95/">
+                <h3 class="media-heading">Golang的GC算法</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Oct 10, 2018
+                  Apr 4, 2020
                 </span>
               </span>
               <div class="media-content hide-xs font-merryweather"><p></p></div>
@@ -634,12 +643,12 @@
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://arbusz.github.io/2018/10/nmap%E6%80%BB%E7%BB%93/">
-                <h3 class="media-heading">Nmap总结</h3>
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/04/%E6%A0%87%E8%AE%B0%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95/">
+                <h3 class="media-heading">标记清除算法</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Oct 10, 2018
+                  Apr 4, 2020
                 </span>
               </span>
               <div class="media-content hide-xs font-merryweather"><p></p></div>
@@ -651,12 +660,12 @@
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://arbusz.github.io/2018/10/raft%E5%8D%8F%E8%AE%AE/">
-                <h3 class="media-heading">Raft协议</h3>
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/03/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E9%97%AE%E9%A2%98/">
+                <h3 class="media-heading">滑动窗口问题</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Oct 10, 2018
+                  Mar 3, 2020
                 </span>
               </span>
               <div class="media-content hide-xs font-merryweather"><p></p></div>
@@ -668,12 +677,12 @@
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://arbusz.github.io/2018/10/%E9%A9%AC%E6%8B%89%E8%BD%A6%E7%AE%97%E6%B3%95/">
-                <h3 class="media-heading">马拉车算法</h3>
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/03/%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E7%AE%97%E6%B3%95/">
+                <h3 class="media-heading">引用计数算法</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Oct 10, 2018
+                  Mar 3, 2020
                 </span>
               </span>
               <div class="media-content hide-xs font-merryweather"><p></p></div>
@@ -685,12 +694,12 @@
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://arbusz.github.io/2018/09/vim%E7%9A%84go%E8%AF%AD%E8%A8%80%E9%85%8D%E7%BD%AE/">
-                <h3 class="media-heading">Vim的go语言配置</h3>
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/03/%E5%A4%8D%E5%88%B6%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95/">
+                <h3 class="media-heading">复制收集算法</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Sep 9, 2018
+                  Mar 3, 2020
                 </span>
               </span>
               <div class="media-content hide-xs font-merryweather"><p></p></div>
@@ -702,12 +711,12 @@
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://arbusz.github.io/2018/09/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AEraft/">
-                <h3 class="media-heading">分布式协议　Raft</h3>
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/02/gc%E7%AE%97%E6%B3%95%E8%AF%84%E4%BB%B7%E6%A0%87%E5%87%86/">
+                <h3 class="media-heading">GC算法评价标准</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Sep 9, 2018
+                  Feb 2, 2020
                 </span>
               </span>
               <div class="media-content hide-xs font-merryweather"><p></p></div>
@@ -719,12 +728,12 @@
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://arbusz.github.io/2018/09/%E4%B8%A4%E7%A7%8D%E4%B8%BB%E6%B5%81%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B/">
-                <h3 class="media-heading">两种主流并发模型</h3>
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/02/gc%E5%8F%AF%E8%BE%BE%E5%88%86%E6%9E%90/">
+                <h3 class="media-heading">GC可达分析</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Sep 9, 2018
+                  Feb 2, 2020
                 </span>
               </span>
               <div class="media-content hide-xs font-merryweather"><p></p></div>
@@ -736,12 +745,12 @@
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://arbusz.github.io/2018/07/%E4%B8%80%E4%B8%AA%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
-                <h3 class="media-heading">一个遍历目录的小程序</h3>
+              <a class="link-unstyled" href="https://arbusz.github.io/2020/02/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/">
+                <h3 class="media-heading">快慢指针</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Jul 7, 2018
+                  Feb 2, 2020
                 </span>
               </span>
               <div class="media-content hide-xs font-merryweather"><p></p></div>
@@ -753,12 +762,12 @@
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://arbusz.github.io/2018/06/%E5%8C%85%E5%90%ABnil%E6%8C%87%E9%92%88%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8Cnil%E6%8E%A5%E5%8F%A3/">
-                <h3 class="media-heading">包含nil指针的接口和nil接口</h3>
+              <a class="link-unstyled" href="https://arbusz.github.io/2019/04/docker%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/">
+                <h3 class="media-heading">Docker架构简介</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Jun 6, 2018
+                  Apr 4, 2019
                 </span>
               </span>
               <div class="media-content hide-xs font-merryweather"><p></p></div>
@@ -774,7 +783,7 @@
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         14 posts found
+         29 posts found
       </p>
     </div>
   </div>

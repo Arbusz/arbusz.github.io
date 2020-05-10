@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Algorithm on Arbus&#39;s Little Site</title>
+    <link>https://arbusz.github.io/categories/algorithm/</link>
+    <description>Recent content in Algorithm on Arbus&#39;s Little Site</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 28 Mar 2020 22:36:04 +0800</lastBuildDate>
+    
+	<atom:link href="https://arbusz.github.io/categories/algorithm/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>滑动窗口问题</title>
+      <link>https://arbusz.github.io/2020/03/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Sat, 28 Mar 2020 22:36:04 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/2020/03/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E9%97%AE%E9%A2%98/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>快慢指针</title>
+      <link>https://arbusz.github.io/2020/02/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/</link>
+      <pubDate>Tue, 18 Feb 2020 22:34:21 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/2020/02/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

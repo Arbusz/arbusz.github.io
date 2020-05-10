@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Output on Arbus&#39;s Little Site</title>
+    <link>https://arbusz.github.io/tags/output/</link>
+    <description>Recent content in Output on Arbus&#39;s Little Site</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 12 Feb 2018 22:36:33 +0800</lastBuildDate>
+    
+	<atom:link href="https://arbusz.github.io/tags/output/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>格式化输出</title>
+      <link>https://arbusz.github.io/2018/02/%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%87%BA/</link>
+      <pubDate>Mon, 12 Feb 2018 22:36:33 +0800</pubDate>
+      
+      <guid>https://arbusz.github.io/2018/02/%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%87%BA/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
